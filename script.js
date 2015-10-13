@@ -1,8 +1,7 @@
-//SCROLL BUG VID SNABB SCROLLNING
-
 //GLOBAL
 var data = [];
 var status;
+var scrollable = 1;
 
 //function som kallas vid första ladningen.
 function run(){
@@ -39,7 +38,7 @@ function setSize(){
 
   $("#mainContent").css("width", data[0] + "px");
   $("#mainContent").css("height", data[1]/3*2 + "px")
-  
+
 }
 
 function setFloaterPos(){
@@ -74,15 +73,23 @@ function autoScroll(){
 }
 
 function setScrollPos(){
-  if(status == 0)
+  if(status == 0 && scrollable == 1)
   {
+    scrollable = 0;
     status = 1;
     $("html, body").animate({scrollTop: data[1]}, 550);
+    setTimeout(function(){
+      scrollable = 1;
+    }, 600);
   }
-  else if(status == 1)
+  else if(status == 1 && scrollable == 1)
   {
+    scrollable = 0;
     status = 0;
     $("html, body").animate({scrollTop: "0px"}, 550);
+    setTimeout(function(){
+      scrollable = 1;
+    }, 600);
   }
 }
 
