@@ -10,11 +10,12 @@ body{
   overflow: hidden;
 }
 
-#owl-demo .item img{
-    display: block;
-    width: 100%;
-    height: auto;
-    background-color: yellow;
+#profilePic{
+  background-color: #34495e;
+}
+
+#mainContent{
+  background-color: #2c3e50;
 }
 
 #mainWrapper {
@@ -42,15 +43,28 @@ padding: 0px;
   width: 100%;
 }
 
+h2 {
+  position:relative;
+  top: 25%;
+  height: auto;
+  font-family: 'Roboto', sans-serif;
+  color: white;
+  font-size: 72pt;
+  text-align: center;
+  width: 100vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 h1 {
   position:relative;
   top: 25%;
   height: auto;
   font-family: 'Roboto', sans-serif;
   color: white;
-  font-size: 50vh;
+  font-size: 30vh;
   text-align: center;
-  width: 50vw;
+  width: 30vw;
   margin-left: auto;
   margin-right: auto;
 }

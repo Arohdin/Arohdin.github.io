@@ -1,4 +1,3 @@
-//FIXA RESIZE.
 //SCROLL BUG VID SNABB SCROLLNING
 
 //GLOBAL
@@ -34,6 +33,13 @@ function setSize(){
 
   $("#superWrapper").css("width", data[0] + "px");
   $("#superWrapper").css("height", (data[1]*2) + "px");
+
+  $("#profilePic").css("width", data[0] + "px");
+  $("#profilePic").css("height", data[1]/3 + "px")
+
+  $("#mainContent").css("width", data[0] + "px");
+  $("#mainContent").css("height", data[1]/3*2 + "px")
+  
 }
 
 function setFloaterPos(){
@@ -93,14 +99,14 @@ $(window).on('mousewheel DOMMouseScroll', function (e) {
     }());
 
     if(direction === 1) {
-       // scroll down
+       //ned
        if(status == 0){
          setScrollPos();
        }
 
     }
     else if(direction === 0) {
-       // scroll up
+       // upp
        if(status == 1){
          setScrollPos();
        }
