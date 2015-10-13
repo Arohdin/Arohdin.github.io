@@ -71,16 +71,16 @@ function setScrollPos(){
   if(status == 0)
   {
     status = 1;
-    $("html, body").animate({scrollTop: data[1]}, 650);
+    $("html, body").animate({scrollTop: data[1]}, 550);
   }
   else if(status == 1)
   {
     status = 0;
-    $("html, body").animate({scrollTop: "0px"}, 650);
+    $("html, body").animate({scrollTop: "0px"}, 550);
   }
 }
 
-//Hanterar vilket håll man scrollar.
+//Hantera scroll-directions
 $(window).on('mousewheel DOMMouseScroll', function (e) {
 
     var direction = (function () {
