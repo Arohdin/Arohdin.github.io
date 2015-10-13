@@ -80,7 +80,7 @@ function setScrollPos(){
   }
 }
 
-//inte skrivit själv lol
+//Hanterar vilket håll man scrollar.
 $(window).on('mousewheel DOMMouseScroll', function (e) {
 
     var direction = (function () {
