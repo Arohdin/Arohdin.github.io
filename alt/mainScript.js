@@ -9,10 +9,12 @@
 */
 
 var scrollable = 1;
+var status;
 
 //OnLoad
 $(document).ready(function() {
 	$(this).scrollTop(0);
+	status = 0;
 });
 
 $(document).ready(function() {
@@ -20,6 +22,7 @@ $(document).ready(function() {
 	var winHeight = $(window).height();
 
 	firstContent.css("height", winHeight);
+	$("#tempContent").css("height", winHeight*2);
 });
 
 
@@ -29,6 +32,7 @@ $(window).resize(function() {
 	var winHeight = $(window).height();
 
 	firstContent.css("height", winHeight);
+	$("#tempContent").css("height", winHeight*2);
 });
 
 
@@ -45,12 +49,12 @@ $(document).scroll(function() {
 	//ersätt 100 med topbar height
 	var firstCH = parseInt($("#firstContent").height());
 
-	if (scrollPos >= 0 && !(scrollPos >= firstCH-32))
+	if (scrollPos >= 0 && !(scrollPos >= firstCH - 64))
 	{
-		elemStuff.css("margin-top", 100 - (90/(firstCH-32) * scrollPos));
-		elemStuff.css("margin-left", 100 - (90/(firstCH-32) * scrollPos));
-		elemStuff.css("width", 100 - (56/(firstCH-32) * scrollPos));
-		elemStuff.css("height", 100 - (56/(firstCH-32) * scrollPos));
+		elemStuff.css("margin-top", 100 - (90/(firstCH-64) * scrollPos));
+		elemStuff.css("margin-left", 100 - (90/(firstCH-64) * scrollPos));
+		elemStuff.css("width", 100 - (56/(firstCH-64) * scrollPos));
+		elemStuff.css("height", 100 - (56/(firstCH-64) * scrollPos));
 	}
 	else
 	{
@@ -66,9 +70,23 @@ $(document).click(function(){
 	var t = $(document).height();
 	var ct = $(document).scrollTop();
 	console.log(ct);
-	if(scrollable == 1 && ct < t/2){
+
+	if(scrollable == 1 && status == 0){
 			scrollable = 0;
+			status = 1;
+			setTimeout(function(){
+				$("#texty").fadeIn("slow");
+			}, 600);
 			$("html, body").animate({scrollTop: t/2 + "px"}, 1200);
+			setTimeout(function(){
+	      scrollable = 1;
+	    }, 1250);
+		}
+		else if(scrollable == 1 && status == 1){
+			scrollable = 0;
+			status = 0;
+			$("#texty").fadeOut("slow");
+			$("html, body").animate({scrollTop: 0 + "px"}, 1200);
 			setTimeout(function(){
 	      scrollable = 1;
 	    }, 1250);

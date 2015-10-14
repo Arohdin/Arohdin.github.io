@@ -1,23 +1,45 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:100);
+
+*{
+	margin: 0;
+	padding: 0;
+}
+
 body {
 	margin: 0;
 	padding: 0;
 	background-color:  #34495e;
-	overflow-x: hidden;
+	overflow: hidden;
 }
 
 #topNavBar {
-	display:block;
 	background-color: #34495e;
 	position: fixed;
 	width: 100vw;
 	height: 64px;
 }
 
+h2{
+	font-family: "Roboto", sans-serif;
+	font-size: 72pt;
+	color: white;
+	text-align: center;
+	margin-top: 50vh;
+}
+
+h1{
+	display: none;
+	font-family: "Roboto", sans-serif;
+	font-size: 72pt;
+	color: white;
+	text-align: center;
+	margin-top: 50vh;
+}
+
 #tempContent {
 	display: block;
 	background-color: #16a085;
 	width: 100vw;
-	height: 2000px;
 }
 
 .mainText {
