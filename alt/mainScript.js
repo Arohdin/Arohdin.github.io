@@ -67,10 +67,22 @@ $(document).scroll(function() {
 });
 
 $(document).click(function(){
+	sweetAnimation();
+	});
+
+$(document).bind("keydown", function(e){
+	var keyPressed = e.keyCode;
+	if(keyPressed == 40 && status == 0){
+		sweetAnimation();
+	}
+	else if(keyPressed == 38 && status == 1){
+		sweetAnimation();
+	}
+})
+
+function sweetAnimation(){
 	var t = $(document).height();
 	var ct = $(document).scrollTop();
-	console.log(ct);
-
 	if(scrollable == 1 && status == 0){
 			scrollable = 0;
 			status = 1;
@@ -79,8 +91,8 @@ $(document).click(function(){
 			}, 600);
 			$("html, body").animate({scrollTop: t/2 + "px"}, 1200);
 			setTimeout(function(){
-	      scrollable = 1;
-	    }, 1250);
+				scrollable = 1;
+			}, 1250);
 		}
 		else if(scrollable == 1 && status == 1){
 			scrollable = 0;
@@ -88,11 +100,10 @@ $(document).click(function(){
 			$("#texty").fadeOut("slow");
 			$("html, body").animate({scrollTop: 0 + "px"}, 1200);
 			setTimeout(function(){
-	      scrollable = 1;
-	    }, 1250);
+				scrollable = 1;
+			}, 1250);
 		}
-	});
-
+}
 
 //DEBUGG
 function getValues()
