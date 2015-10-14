@@ -1,3 +1,8 @@
+//Fixa keyboard event pilarna.
+//fixa carousell
+//fixa smoother-scrolling
+//fixa anchors istället för att dela data med ett tal.
+
 //GLOBAL
 var data = [];
 var status;
@@ -118,6 +123,17 @@ $(window).on('mousewheel DOMMouseScroll', function (e) {
          setScrollPos();
        }
     }
+});
+
+$(document).bind("keydown", function(e){
+  var t = e.keyCode
+  if(t == 38 && status == 1){
+    setScrollPos();
+  }
+  else if(t == 40 && status == 0){
+    setScrollPos();
+  }
+
 });
 
 $(window).scroll(function(){
