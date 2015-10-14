@@ -1,0 +1,45 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color:  #34495e;
+	overflow-x: hidden;
+}
+
+#topNavBar {
+	display:block;
+	background-color: #34495e;
+	position: fixed;
+	width: 100vw;
+	height: 64px;
+}
+
+#tempContent {
+	display: block;
+	background-color: #16a085;
+	width: 100vw;
+	height: 2000px;
+}
+
+.mainText {
+	font-size: 12pt;
+	font-color: white;
+
+}
+
+#firstContent {
+	display:block;
+	width: 100vw;
+	height: 300px;
+	background-color: #34495e;
+}
+
+#stuff {
+	float: left;
+	position: fixed;
+	width: 100px;
+	height: 100px;
+	background-color: red;
+	margin-top: 100px;
+	margin-left: 100px;
+	z-index: 1;
+}

@@ -1,0 +1,10 @@
+body {
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+}
+
+#theCanvas {
+  background-color: #009966;
+  background-color: #34495e;
+}
