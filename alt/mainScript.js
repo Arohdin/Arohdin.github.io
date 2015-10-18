@@ -1,11 +1,10 @@
 /*
 	TODO:
-
-	*Skapa animate funktioner som dra igång vid vissa scrollpositioner.
-
-
+	*skapa animate funktioner som dra igång vid vissa scrollpositioner.
 	Övriga kommentarer:
 
+	Fixa så att den anpassar scrollpos vid resize.
+	Fixa så att man kan användad en som "bjork coming soon"
 */
 
 var scrollable = 1;
