@@ -1,21 +1,17 @@
 /*########PRIO ATT FIXA##########
 
-  1. fix så att partiklarna flyttar sig innanför rutan vid resize.
-  2. Iställer för winWidth * 2, skapa en superSample variable
-  3. fixa så att dem går över på andra sidan
-  4. fixa så att dem ej spawnar i kanten (dem måste spawna width - Radius)
+  **MÅSTA: FIXA GLOBALA så att dem skickas in istället !!!JOBBIGT!!!**
+
+  1. WTF HÄNDER NÄR MAN KLICKAR?!
+  2. fixa så att dem ej spawnar i kanten (dem måste spawna width - Radius)
 
 */
 
 //GÖR MER DYNAMISKT
 //  ex. ändra numeriska till variabler
-//Fixa hastighets variabel så att partiklarna kan ha olika ahstigheter
-//  (hastighets array med varje elemnt mellan ex. 0.5 - 1.5)
 //  Lägg nuvarande "steps" som bashastighet
-//Fixa så att cirklarna blir olika storlekar
-//Fixa så att steglängderna på fadeeffekten ej är beroende av längden på hur långt ett sträck max får vara (???)
 
-//FIXA GLOBALA så att dem skickas in istället *JOBBIGT*
+//
 
 
 var canvas, ctx;
@@ -30,6 +26,14 @@ var chk;
 var winHeight, winWidth;
 var speedArr = [];
 var radArr = [];
+var _PAUSE = false;
+var superSampler = 2;
+var stepsToGo = 70;
+var hyperX = [];
+var hyperY = [];
+var stepsLeft = stepsToGo;
+var _DRAWLINES = true;
+var xMid, yMid;
 
 $(document).ready(function() {
   canvas = document.getElementById("theCanvas");
@@ -40,13 +44,11 @@ $(document).ready(function() {
 
   winHeight = $(window).height();
   winWidth = $(window).width();
-  canvas.height = winHeight * 2;
-  canvas.width = winWidth * 2;
+  canvas.height = winHeight * superSampler;
+  canvas.width = winWidth * superSampler;
 
   $("#theCanvas").css("height", winHeight);
   $("#theCanvas").css("width", winWidth);
-
-
 
   generate();
   firstDraw();
@@ -59,8 +61,8 @@ $(window).resize(function(){
 
   winHeight = $(window).height();
   winWidth = $(window).width();
-  canvas.height = winHeight * 2;
-  canvas.width = winWidth * 2;
+  canvas.height = winHeight * superSampler;
+  canvas.width = winWidth * superSampler;
 
   $("#theCanvas").css("height", winHeight);
   $("#theCanvas").css("width", winWidth);
@@ -69,15 +71,15 @@ $(window).resize(function(){
 
   for (var i = 0; i < num; i++)
   {
-    if(xPrev[i] > winWidth*2)
+    if(xPrev[i] > winWidth * superSampler)
     {
-      delta = winWidth * 2 - xPrev[i];
+      delta = winWidth * superSampler - xPrev[i];
       xPrev[i] = winWidth - delta;
     }
 
-    if(yPrev[i] > winHeight*2)
+    if(yPrev[i] > winHeight * superSampler)
     {
-      delta = winHeight * 2 - yPrev[i];
+      delta = winHeight * superSampler - yPrev[i];
       yPrev[i] = winHeight - delta;
     }
   }
@@ -94,17 +96,32 @@ function firstDraw() {
     xPrev[i] = xStart[i];
     yPrev[i] = yStart[i];
   }
-
   draw();
+}
+
+function setAgain() {
+  for(var i = 0; i < num; i++)
+  {
+    xPrev[i] = xStart[i];
+    yPrev[i] = yStart[i];
+  }
 }
 
 function draw() {
   var xTemp = 0;
   var yTemp = 0;
+  xMid = canvas.width / 2;
+  yMid = canvas.height / 2;
 
   //CLEAR CANVAS
-  ctx.clearRect (0 , 0 , canvas.width, canvas.height);
+  if(!_PAUSE)
+  {
+    ctx.clearRect (0 , 0 , canvas.width, canvas.height);
+  }
 
+
+if(!_PAUSE)
+{
   //Bestämmer positionen
   for(var i = 0; i < num; i++)
   {
@@ -113,14 +130,14 @@ function draw() {
     yTemp = yPrev[i] + Math.sin(yAngles[i])*steps * speedArr[i];
 
     //Håller innanför ramarna
-    if(yTemp <= 0 + radArr[i]|| yTemp >= winHeight * 2 - radArr[i])
+    if(yTemp <= 0 + radArr[i]|| yTemp >= winHeight * superSampler - radArr[i])
     {
       yAngles[i] = -1 * yAngles[i];
 
       xTemp = xPrev[i] + Math.cos(xAngles[i]) * steps;
       yTemp = yPrev[i] + Math.sin(yAngles[i]) * steps;
     }
-    else if(xTemp <= 0 + radArr[i] || xTemp >= winWidth * 2 - radArr[i])
+    else if(xTemp <= 0 + radArr[i] || xTemp >= winWidth * superSampler - radArr[i])
         {
           xAngles[i] = (Math.PI - xAngles[i]);
 
@@ -131,6 +148,49 @@ function draw() {
     xPrev[i] = xTemp;
     yPrev[i] = yTemp;
   }
+
+}
+else
+{
+  if(stepsLeft > 0)
+  {
+    for(var i = 0; i < num; i++)
+    {
+      if(xPrev[i] != xMid)
+      {
+        if(xPrev[i] >  xMid)
+        {
+          xPrev[i] -= hyperX[i];
+        }
+        else
+        {
+          xPrev[i] += hyperX[i];
+        }
+      }
+      if(yPrev[i] != yMid)
+      {
+        if(yPrev[i] > yMid)
+        {
+          yPrev[i] -= hyperY[i];
+        }
+        else
+        {
+          yPrev[i] += hyperY[i];
+        }
+      }
+    }
+  }
+  else
+  {
+    setTimeout(function () {
+      generate();
+      setAgain();
+      _DRAWLINES = true;
+      _PAUSE = false;
+    }, 500);
+  }
+  stepsLeft--;
+}
 
 
   //Ritar upp prickarna
@@ -143,25 +203,29 @@ function draw() {
   }
 
   //Ritar sträck
-  for(var i = 0; i < num; i++)
+  if(_DRAWLINES)
   {
-    for(t = 0; t < num; t++)
+    for(var i = 0; i < num; i++)
     {
-      if(xPrev[i] != xPrev[t] && yPrev[i] != yPrev[t] && yPrev[i] != yPrev[t])
+      for(t = 0; t < num; t++)
       {
-        chk = checkDist(i, t);
-        if(chk != -1)
+        if(xPrev[i] != xPrev[t] && yPrev[i] != yPrev[t] && yPrev[i] != yPrev[t])
         {
-          ctx.beginPath();
-          ctx.moveTo(xPrev[i],yPrev[i]);
-          ctx.lineTo(xPrev[t], yPrev[t]);
-          ctx.lineWidth = 1.5;
-          ctx.strokeStyle = "rgba(243, 156, 18," + chk + ")";
-          ctx.stroke();
+          chk = checkDist(i, t);
+          if(chk != -1)
+          {
+            ctx.beginPath();
+            ctx.moveTo(xPrev[i],yPrev[i]);
+            ctx.lineTo(xPrev[t], yPrev[t]);
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = "rgba(243, 156, 18," + chk + ")";
+            ctx.stroke();
+          }
         }
       }
     }
   }
+
   requestAnimationFrame(draw);
 }
 
@@ -190,7 +254,6 @@ function checkDist(i,t) {
     var alpha = 1.0;
     return alpha;
   }
-
 }
 
 function generate() {
@@ -224,9 +287,28 @@ function generate() {
       i--;
     }
   }
-
 }
 
+function setPause()
+{
+  if(_PAUSE)
+  {
+    _PAUSE = false;
+  }
+  else
+  {
+    _DRAWLINES = false;
+    _PAUSE = true;
+    stepsLeft = stepsToGo;
+    hyperX = xPrev.slice();
+    hyperY = yPrev.slice();
+    for(var i = 0; i < num; i++)
+    {
+      hyperX[i] = Math.abs(xPrev[i] - xMid) / stepsToGo;
+      hyperY[i] = Math.abs(yPrev[i] - yMid) / stepsToGo;
+    }
+  }
+}
 
 //Particle moves to the center at a speed which equals that
   //all particles have the same traveltime to reach the center.
@@ -234,7 +316,3 @@ function generate() {
   //Time is interval.
 //When reaching center, remove particle.
   //When all particles are gone, respawn them.
-function hyperSpeed(){
-
-
-}
