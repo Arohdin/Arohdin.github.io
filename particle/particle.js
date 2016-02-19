@@ -190,8 +190,8 @@ else //OM DU VILL HA ATT DEM ÅKER TILL MITTEN SÅ BYT TILLBAKA TILL xMid OCH yM
   }
   else
   {
-    generate(); //FÖR COOL EFFECT, LÄGG GENERATE() INNANFÖR TMEOUT FUNCTION.
     setTimeout(function () {
+      generate(); //FÖR COOL EFFECT, LÄGG GENERATE() INNANFÖR TMEOUT FUNCTION. ANNARS INNANFÖR.
       setAgain();
       _DRAWLINES = true;
       _PAUSE = false;
