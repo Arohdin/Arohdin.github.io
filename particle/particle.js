@@ -10,8 +10,8 @@
 //GÖR MER DYNAMISKT
 //  ex. ändra numeriska till variabler
 //  Lägg nuvarande "steps" som bashastighet
-
 //
+
 
 
 var canvas, ctx;
@@ -34,10 +34,19 @@ var hyperY = [];
 var stepsLeft = stepsToGo;
 var _DRAWLINES = true;
 var xMid, yMid;
+var capturedPosition;
+var mousePos;
+var _READY = true;
 
 $(document).ready(function() {
   canvas = document.getElementById("theCanvas");
   ctx = canvas.getContext("2d");
+
+  canvas.addEventListener('mousemove', function(evt) {
+          mousePos = getMousePos(canvas, evt);
+        }, false);
+
+
 })
 
 $(document).ready(function() {
@@ -150,15 +159,15 @@ if(!_PAUSE)
   }
 
 }
-else
+else //OM DU VILL HA ATT DEM ÅKER TILL MITTEN SÅ BYT TILLBAKA TILL xMid OCH yMid!!!
 {
   if(stepsLeft > 0)
   {
     for(var i = 0; i < num; i++)
     {
-      if(xPrev[i] != xMid)
+      if(xPrev[i] != capturedPosition.x)
       {
-        if(xPrev[i] >  xMid)
+        if(xPrev[i] >  capturedPosition.x)
         {
           xPrev[i] -= hyperX[i];
         }
@@ -167,9 +176,9 @@ else
           xPrev[i] += hyperX[i];
         }
       }
-      if(yPrev[i] != yMid)
+      if(yPrev[i] != capturedPosition.y)
       {
-        if(yPrev[i] > yMid)
+        if(yPrev[i] > capturedPosition.y)
         {
           yPrev[i] -= hyperY[i];
         }
@@ -187,6 +196,7 @@ else
       setAgain();
       _DRAWLINES = true;
       _PAUSE = false;
+      _READY = true;
     }, 500);
   }
   stepsLeft--;
@@ -289,30 +299,44 @@ function generate() {
   }
 }
 
+
+//OM DU VILL HA ATT DEM ÅKER TILL MITTEN SÅ BYT TILLBAKA TILL xMid OCH yMid!!!
 function setPause()
 {
   if(_PAUSE)
   {
-    _PAUSE = false;
+    if(_READY)
+    {
+      _PAUSE = false;
+    }
   }
   else
   {
-    _DRAWLINES = false;
-    _PAUSE = true;
-    stepsLeft = stepsToGo;
-    hyperX = xPrev.slice();
-    hyperY = yPrev.slice();
-    for(var i = 0; i < num; i++)
+    if(_READY)
     {
-      hyperX[i] = Math.abs(xPrev[i] - xMid) / stepsToGo;
-      hyperY[i] = Math.abs(yPrev[i] - yMid) / stepsToGo;
+      _READY = false;
+      capturedPosition = mousePos;
+      capturedPosition.x = capturedPosition.x * superSampler;
+      capturedPosition.y = capturedPosition.y * superSampler;
+
+      _DRAWLINES = false;
+      _PAUSE = true;
+      stepsLeft = stepsToGo;
+      hyperX = xPrev.slice();
+      hyperY = yPrev.slice();
+      for(var i = 0; i < num; i++)
+      {
+        hyperX[i] = Math.abs(xPrev[i] - capturedPosition.x) / stepsToGo;
+        hyperY[i] = Math.abs(yPrev[i] - capturedPosition.y) / stepsToGo;
+      }
     }
   }
 }
 
-//Particle moves to the center at a speed which equals that
-  //all particles have the same traveltime to reach the center.
-//Particles are not moved at the same time, one particle at the time.
-  //Time is interval.
-//When reaching center, remove particle.
-  //When all particles are gone, respawn them.
+function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+      }
