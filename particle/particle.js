@@ -2,8 +2,7 @@
 
   **MÅSTA: FIXA GLOBALA så att dem skickas in istället !!!JOBBIGT!!!**
 
-  1. WTF HÄNDER NÄR MAN KLICKAR?!
-  2. fixa så att dem ej spawnar i kanten (dem måste spawna width - Radius)
+  1. fixa så att dem ej spawnar i kanten (dem måste spawna width - Radius)
 
 */
 
@@ -191,8 +190,8 @@ else //OM DU VILL HA ATT DEM ÅKER TILL MITTEN SÅ BYT TILLBAKA TILL xMid OCH yM
   }
   else
   {
+    generate(); //FÖR COOL EFFECT, LÄGG GENERATE() INNANFÖR TMEOUT FUNCTION.
     setTimeout(function () {
-      generate();
       setAgain();
       _DRAWLINES = true;
       _PAUSE = false;
