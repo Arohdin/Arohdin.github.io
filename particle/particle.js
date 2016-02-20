@@ -11,7 +11,7 @@
 //  Lägg nuvarande "steps" som bashastighet
 //
 
-
+var prevFrameTime = 0;
 
 var canvas, ctx;
 var xStart = [];
@@ -21,7 +21,7 @@ var xPrev = [];
 var yPrev = [];
 var yAngles = [];
 var xAngles = [];
-var chk;
+var chk, chkMouse;
 var winHeight, winWidth;
 var speedArr = [];
 var radArr = [];
@@ -36,6 +36,11 @@ var xMid, yMid;
 var capturedPosition;
 var mousePos;
 var _READY = true;
+var _SPEED = 100;
+var FPS = 0;
+var c = 0;
+var prevMouseCoord;
+var _DRAWMOUSE = false;
 
 $(document).ready(function() {
   canvas = document.getElementById("theCanvas");
@@ -45,8 +50,23 @@ $(document).ready(function() {
           mousePos = getMousePos(canvas, evt);
         }, false);
 
+  window.addEventListener( "keypress", doKeyDown, false);
 
 })
+
+function doKeyDown(code){
+  console.log(code.keyCode);
+  if(code.keyCode == 97)
+  {
+      if(_DRAWMOUSE)
+      {
+        _DRAWMOUSE = false;
+      }
+      else {
+        _DRAWMOUSE = true;
+      }
+  }
+}
 
 $(document).ready(function() {
 
@@ -115,7 +135,17 @@ function setAgain() {
   }
 }
 
-function draw() {
+function draw(time) {
+  c++;
+  var tempTime = time;
+  if((tempTime - prevFrameTime) >= 1000)
+  {
+    FPS = c;
+    prevFrameTime = time;
+    c = 0;
+  }
+  ctx.font = "50px Georgia";
+
   var xTemp = 0;
   var yTemp = 0;
   xMid = canvas.width / 2;
@@ -126,6 +156,8 @@ function draw() {
   {
     ctx.clearRect (0 , 0 , canvas.width, canvas.height);
   }
+    ctx.fillText("fps: " + FPS, 100,100);
+    ctx.fillText("press 'a'", 100,200);
 
 
 if(!_PAUSE)
@@ -133,7 +165,7 @@ if(!_PAUSE)
   //Bestämmer positionen
   for(var i = 0; i < num; i++)
   {
-    var steps = 500/700; //ANTAL DRAWCALLS INNAN DEN GÅR 500px LÄNGD
+    var steps = 500/_SPEED; //ANTAL DRAWCALLS INNAN DEN GÅR 500px LÄNGD
     xTemp = xPrev[i] + Math.cos(xAngles[i])*steps * speedArr[i];
     yTemp = yPrev[i] + Math.sin(yAngles[i])*steps * speedArr[i];
 
@@ -144,6 +176,7 @@ if(!_PAUSE)
 
       xTemp = xPrev[i] + Math.cos(xAngles[i]) * steps;
       yTemp = yPrev[i] + Math.sin(yAngles[i]) * steps;
+
     }
     else if(xTemp <= 0 + radArr[i] || xTemp >= winWidth * superSampler - radArr[i])
         {
@@ -151,6 +184,7 @@ if(!_PAUSE)
 
           xTemp = xPrev[i] + Math.cos(xAngles[i]) * steps;
           yTemp = yPrev[i] + Math.sin(yAngles[i]) * steps;
+
         }
 
     xPrev[i] = xTemp;
@@ -232,10 +266,49 @@ else //OM DU VILL HA ATT DEM ÅKER TILL MITTEN SÅ BYT TILLBAKA TILL xMid OCH yM
           }
         }
       }
+      if(mousePos && _DRAWMOUSE)
+      {
+        chkMouse = checkMouseDist(i);
+        prevMouseCoord = mousePos;
+        if(chkMouse != -1)
+        {
+          ctx.beginPath();
+          ctx.moveTo(xPrev[i],yPrev[i]);
+          ctx.lineTo(mousePos.x * superSampler, mousePos.y * superSampler);
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = "rgba(100, 156, 255," + chkMouse + ")";
+          ctx.stroke();
+        }
+      }
     }
   }
-
   requestAnimationFrame(draw);
+}
+
+function checkMouseDist(i){
+  var mx = 0;
+  var my = 0;
+  var mHypo = 0;
+  var maxMouseHypo = 800;
+
+  if(mousePos)
+  {
+    mx = Math.abs(xPrev[i] - mousePos.x * superSampler);
+    my = Math.abs(yPrev[i] - mousePos.y * superSampler);
+    mHypo = Math.sqrt((Math.pow(mx, 2)+(Math.pow(my, 2))));
+  }
+
+
+
+  if(mHypo > maxMouseHypo)
+  {
+    return -1;
+  }
+  else {
+    return 1 - mHypo/maxMouseHypo;
+  }
+
+
 }
 
 function checkDist(i,t) {
@@ -253,15 +326,7 @@ function checkDist(i,t) {
     return -1;
   }
   else {
-    if(hypo == 0)
-    {
-      hypo == 1;
-    }
-
     return 1 - hypo/maxLineLength;
-
-    var alpha = 1.0;
-    return alpha;
   }
 }
 
