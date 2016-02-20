@@ -36,11 +36,13 @@ var xMid, yMid;
 var capturedPosition;
 var mousePos;
 var _READY = true;
-var _SPEED = 500;
+var _CURRENTSPEED = 100;
+var _SPEED = [100,500]; //NORMAL SPEED AND SLOWMO
 var FPS = 0;
 var c = 0;
 var prevMouseCoord;
 var _DRAWMOUSE = false;
+var _CLEAR = true;
 
 $(document).ready(function() {
   canvas = document.getElementById("theCanvas");
@@ -65,6 +67,28 @@ function doKeyDown(code){
       else {
         _DRAWMOUSE = true;
       }
+  }
+  if(code.keyCode == 115)
+  {
+    if(_CURRENTSPEED != _SPEED[0])
+    {
+      _CURRENTSPEED = _SPEED[0];
+    }
+    else {
+      _CURRENTSPEED = _SPEED[1];
+    }
+  }
+  if(code.keyCode == 100)
+  {
+    if(_CLEAR)
+    {
+      _CLEAR = false;
+    }
+    else {
+      {
+        _CLEAR = true;
+      }
+    }
   }
 }
 
@@ -144,7 +168,6 @@ function draw(time) {
     prevFrameTime = time;
     c = 0;
   }
-  ctx.font = "50px Georgia";
 
   var xTemp = 0;
   var yTemp = 0;
@@ -152,13 +175,16 @@ function draw(time) {
   yMid = canvas.height / 2;
 
   //CLEAR CANVAS
-  if(!_PAUSE)
+  if(_CLEAR)
   {
     ctx.clearRect (0 , 0 , canvas.width, canvas.height);
   }
-    ctx.fillText("fps: " + FPS, 100,100);
-    ctx.fillText("press 'a'", 100,200);
-    ctx.fillText("press 'mb1'", 100,300);
+    ctx.font = "25px Roboto";
+    ctx.fillText("fps: " + FPS, (winWidth * superSampler) - 100, 50);
+    ctx.fillText("press 'a'", 25,50);
+    ctx.fillText("press 's'", 25,75);
+    ctx.fillText("press 'd'", 25,100);
+    ctx.fillText("press 'mb1'", 25,125);
 
 
 if(!_PAUSE)
@@ -166,7 +192,7 @@ if(!_PAUSE)
   //Bestämmer positionen
   for(var i = 0; i < num; i++)
   {
-    var steps = 500/_SPEED; //ANTAL DRAWCALLS INNAN DEN GÅR 500px LÄNGD
+    var steps = 500/_CURRENTSPEED; //ANTAL DRAWCALLS INNAN DEN GÅR 500px LÄNGD
     xTemp = xPrev[i] + Math.cos(xAngles[i])*steps * speedArr[i];
     yTemp = yPrev[i] + Math.sin(yAngles[i])*steps * speedArr[i];
 
@@ -231,6 +257,7 @@ else //OM DU VILL HA ATT DEM ÅKER TILL MITTEN SÅ BYT TILLBAKA TILL xMid OCH yM
       _DRAWLINES = true;
       _PAUSE = false;
       _READY = true;
+      _CLEAR = true;
     }, 500);
   }
   stepsLeft--;
@@ -373,12 +400,14 @@ function setPause()
     if(_READY)
     {
       _PAUSE = false;
+      _CLEAR = true;
     }
   }
   else
   {
     if(_READY)
     {
+      _CLEAR = false;
       _READY = false;
       capturedPosition = mousePos;
       capturedPosition.x = capturedPosition.x * superSampler;
