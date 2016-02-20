@@ -36,7 +36,7 @@ var xMid, yMid;
 var capturedPosition;
 var mousePos;
 var _READY = true;
-var _SPEED = 100;
+var _SPEED = 500;
 var FPS = 0;
 var c = 0;
 var prevMouseCoord;
@@ -158,6 +158,7 @@ function draw(time) {
   }
     ctx.fillText("fps: " + FPS, 100,100);
     ctx.fillText("press 'a'", 100,200);
+    ctx.fillText("press 'mb1'", 100,300);
 
 
 if(!_PAUSE)
