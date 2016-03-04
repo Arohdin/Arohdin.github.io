@@ -91,6 +91,3 @@ function PHYSObject(inObj, inState){
 
 
 }
-
-
-/* KOLLA ANTECKNINGAR OM GRUPPER..../*

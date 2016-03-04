@@ -37,23 +37,24 @@ $(document).ready(function(){
     keyPressed[e.keyCode] = false;
   } ,false);
 
-  //CLOCK
-  c = new THREE.Clock();
-
-  //PHYS
-  physEngine = new PHYS();
-  physEngine.defineObject();
-
   cube2.scale.z = 10;
 
   g = new THREE.Group()
   g.add(cube2);
+    scene.add(g);
+  //CLOCK
+  c = new THREE.Clock();
 
-  scene.add(g);
+  //PHYS
+
+  physEngine = new PHYS();
+
   PHYS_CUBE = new PHYSObject(cube, physEngine.STATIC);
   physEngine.add(PHYS_CUBE);
   PHYS_GROUP = new PHYSObject(g,physEngine.MOVABLE);
   physEngine.add(PHYS_GROUP);
+
+
   //RENDER
   render();
 });
