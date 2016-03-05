@@ -128,7 +128,7 @@ function keyEvents(dt){
   {
     if(d1 >= 0.1)
     {
-      cube.material.color.setRGB(Math.random(), Math.random(), Math.random());
+      cube1.material.color.setRGB(Math.random(), Math.random(), Math.random());
       d1 = 0.0;
     }
     else {
