@@ -6,8 +6,9 @@ function PHYS(){
   //CONSTANTS
   PHYS.STATIC = -1;
   PHYS.MOVABLE = 1;
-  PHYS.DEFAULT_GRAVITY = -9.82;
+  PHYS.DEFAULT_GRAVITY = THREE.Vector3(0,-9.82,0);
   PHYS.DEFAULT_NORMDIST = 0.1;
+  PHYS.DEFAULT_MASS = 1.00;
 
   //VARIABLES
   PHYS._grav = PHYS.DEFAULT_GRAVITY; //gravity variable
@@ -18,19 +19,49 @@ function PHYS(){
   PHYS.staticRenderArray = [];
 
   //FUNCTIONS
-  PHYS.add = function(_obj){
-    if(_obj.state == PHYS.STATIC)
+  PHYS.add = function(obj){
+    if(obj.state == PHYS.STATIC)
     {
-      PHYS.staticRenderArray.push(_obj);
-    }
-    else {
+      if(obj.typeOf == "Group")
       {
-        PHYS.movableRenderArray.push(_obj);
+        for(var i = 0; i < obj.PHYSChildren.length; ++i)
+        {
+          if(obj.PHYSChildren[i].typeOf == "Mesh")
+          {
+            PHYS.staticRenderArray.push(obj.PHYSChildren[i]);
+          }
+          else if(obj.PHYSChildren[i].typeOf == "Group")
+          {
+            PHYS.add(obj.PHYSChildren[i]);
+          }
+        }
+      }
+      else if(obj.typeOf == "Mesh")
+      {
+        PHYS.staticRenderArray.push(obj);
       }
     }
-  }
-
-  PHYS.remove = function(){
+    else if(obj.state == PHYS.MOVABLE)
+    {
+      if(obj.typeOf == "Group")
+      {
+        for(var i = 0; i < obj.PHYSChildren.length; ++i)
+        {
+          if(obj.PHYSChildren[i].type == "Mesh")
+          {
+            PHYS.movableRenderArray.push((obj.PHYSChildren[i]));
+          }
+          else if(obj.PHYSChildren[i].type == "Group")
+          {
+            PHYS.add(obj.PHYSChildren[i]);
+          }
+        }
+      }
+      else if(obj.typeOf == "Mesh")
+      {
+        PHYS.movableRenderArray.push(obj);
+      }
+    }
   }
 
   PHYS.init = function(grav,nd){
@@ -39,12 +70,12 @@ function PHYS(){
   }
 
   PHYS.render = function(PE, c){
-    //USES ARRAYS AND CALCULATES THE MOVEMENT
-        //HAS PARAMTER obj.up..
     for(var i = 0; i < PE.movableRenderArray.length; ++i)
     {
 
     }
+  }
+  PHYS.remove = function(){
   }
 
 }
@@ -60,10 +91,11 @@ function PHYSObject(inObj, inState){
   _OBJECT.state;  //if static or moveable.
   _OBJECT.mass; //in kg
   _OBJECT.THREEid;  //ID of object given by THREE.js
-  _OBJECT.childrenID = [];  //ID of children given by THREE.js
+  _OBJECT.children = [];  //ID of children given by THREE.js
   _OBJECT.numberOfChildren; //Nmber of children...
   _OBJECT.parentID; //THREE.js-ID of parent to a child.
   _OBJECT.THREEObj; //Holds the actual THREE OBJECT
+  _OBJECT.PHYSChildren = [];
 
   if(inObj.type == "Mesh")
   {
@@ -71,6 +103,8 @@ function PHYSObject(inObj, inState){
     _OBJECT.typeOf = "Mesh";
     _OBJECT.state = inState;
     _OBJECT.THREEid = inObj.id;
+    _OBJECT.mass = _OBJECT.DEFAULT_MASS;
+    _OBJECT.numberOfChildren = 0;
   }
   else if(inObj.type == "Group")  //MAKE THIS RECURSIVE
   {
@@ -79,13 +113,18 @@ function PHYSObject(inObj, inState){
     _OBJECT.state = inState;
     _OBJECT.THREEid = inObj.id;
     _OBJECT.numberOfChildren = inObj.children.length;
-    for(var i = 0; i < _OBJECT.numberOfChildren; ++i)
-    {
-      _OBJECT.childrenID.push(inObj.children[i]);
-    }
+
     if(inObj.parent != null)
     {
+      //If id = 1, then object is direct child of SCENE
       _OBJECT.parentID = inObj.parent.id;
+    }
+
+    for(var i = 0; i < _OBJECT.numberOfChildren; ++i)
+    {
+      _OBJECT.children.push(inObj.children[i]);
+      //THIS WILL GET ALL GROUPS AND MESHES WITHIN THE GROUP (recirseive);
+      _OBJECT.PHYSChildren.push(new PHYSObject(inObj.children[i], inState));
     }
   }
 
@@ -98,5 +137,12 @@ function PHYSObject(inObj, inState){
     _OBJECT.state = inState;
   }
 
+  _OBJECT.getChild = function(key){
+
+  }
+
+  _OBJECT.createFromGroup = function(inGroup){
+
+  }
 
 }
