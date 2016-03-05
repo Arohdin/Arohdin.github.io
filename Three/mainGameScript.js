@@ -124,18 +124,4 @@ function keyEvents(dt){
     group1.translateX(-0.2);
     cube1.translateX(-0.2);
   }
-  if(keyPressed[32] == true)
-  {
-    if(d1 >= 0.1)
-    {
-      cube1.material.color.setRGB(Math.random(), Math.random(), Math.random());
-      d1 = 0.0;
-    }
-    else {
-      {
-        d1 += dt;
-      }
-    }
-
-  }
 }
