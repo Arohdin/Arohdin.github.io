@@ -6,10 +6,12 @@ function PHYS(){
   //CONSTANTS
   PHYS.STATIC = -1;
   PHYS.MOVABLE = 1;
-  PHYS.DEFAULT_GRAVITY = 9.82;
+  PHYS.DEFAULT_GRAVITY = -9.82;
+  PHYS.DEFAULT_NORMDIST = 0.1;
 
   //VARIABLES
-  PHYS._grav; //gravity variable
+  PHYS._grav = PHYS.DEFAULT_GRAVITY; //gravity variable
+  PHYS._normDist = PHYS.DEFAULT_NORMDIST;
 
   //TO RENDER
   PHYS.movableRenderArray = [];
@@ -31,11 +33,18 @@ function PHYS(){
   PHYS.remove = function(){
   }
 
-  PHYS.defineObject = function(){
+  PHYS.init = function(grav,nd){
+    PHYS._grav = grav;
+    PHYS._normDist = Math.abs(nd);
   }
 
-  PHYS.render = function(){
+  PHYS.render = function(PE, c){
     //USES ARRAYS AND CALCULATES THE MOVEMENT
+        //HAS PARAMTER obj.up..
+    for(var i = 0; i < PE.movableRenderArray.length; ++i)
+    {
+
+    }
   }
 
 }
@@ -50,11 +59,11 @@ function PHYSObject(inObj, inState){
   _OBJECT.typeOf; //group or mesh
   _OBJECT.state;  //if static or moveable.
   _OBJECT.mass; //in kg
-  _OBJECT.THREEid;
-  _OBJECT.childrenID = [];
-  _OBJECT.numberOfChildren;
-  _OBJECT.parentID;
-  _OBJECT.THREEObj;
+  _OBJECT.THREEid;  //ID of object given by THREE.js
+  _OBJECT.childrenID = [];  //ID of children given by THREE.js
+  _OBJECT.numberOfChildren; //Nmber of children...
+  _OBJECT.parentID; //THREE.js-ID of parent to a child.
+  _OBJECT.THREEObj; //Holds the actual THREE OBJECT
 
   if(inObj.type == "Mesh")
   {
@@ -63,7 +72,7 @@ function PHYSObject(inObj, inState){
     _OBJECT.state = inState;
     _OBJECT.THREEid = inObj.id;
   }
-  else if(inObj.type == "Group")
+  else if(inObj.type == "Group")  //MAKE THIS RECURSIVE
   {
     _OBJECT.THREEObj = inObj;
     _OBJECT.typeOf = "Group";

@@ -46,12 +46,14 @@ $(document).ready(function(){
   c = new THREE.Clock();
 
   //PHYS
-
   physEngine = new PHYS();
+  physEngine.init(physEngine.DEFAULT_GRAVITY, physEngine.DEFAULT_NORMDIST);
 
-  PHYS_CUBE = new PHYSObject(cube, physEngine.STATIC);
-  physEngine.add(PHYS_CUBE);
-  PHYS_GROUP = new PHYSObject(g,physEngine.MOVABLE);
+  PHYS_GROUP = new PHYSObject(g, physEngine.STATIC);
+  physEngine.add(PHYS_GROUP);
+
+  PHYS_CUBE = new PHYSObject(cube,physEngine.MOVABLE);
+  PHYS_CUBE.setMass(10);
   physEngine.add(PHYS_GROUP);
 
 
@@ -63,6 +65,7 @@ $(document).ready(function(){
 function render(){
   keyEvents(c.getDelta());
   requestAnimationFrame(render);
+  physEngine.render(physEngine, c);
   renderer.render(scene, camera);
 }
 
