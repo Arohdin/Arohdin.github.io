@@ -13,7 +13,7 @@ $(document).ready(function(){
   //INIT SCENE & CAMERA
   scene = new THREE.Scene();
   camera  = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 500);
-  camera.position.z = 25;
+  camera.position.z = 50;
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -59,7 +59,7 @@ $(document).ready(function(){
   cube2.position.x = -1;
   cube3.position.x = 1;
   cube4.position.x = 3;
-  floor1.position.y = -10;
+  floor1.position.y = -20;
 
 
   //EVENTLISTENERS
@@ -83,14 +83,13 @@ $(document).ready(function(){
   PHYS_GROUP = new PHYSObject(group1, physEngine.STATIC);
 
   //Set Parameters
-  PHYS_CUBE.setMass(10);
+  PHYS_CUBE.setMass(1);
 
   //Adds PHYS-Objects
   physEngine.add(PHYS_CUBE);
   physEngine.add(PHYS_GROUP);
 
   //DEBUGG
-  physEngine.remove(PHYS_GROUP);
 
   //CALLS RENDER
   render();
@@ -98,8 +97,9 @@ $(document).ready(function(){
 
 //RENDER-LOOP
 function render(){
+  var dt = c.getDelta();
   keyEvents();  //Do Key-events
-  physEngine.render(physEngine, c.getDelta());
+  physEngine.render(physEngine, dt);
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 }

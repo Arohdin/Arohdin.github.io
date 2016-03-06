@@ -6,7 +6,7 @@ function PHYS(){
   //CONSTANTS
   PHYS.STATIC = -1;
   PHYS.MOVABLE = 1;
-  PHYS.DEFAULT_GRAVITY = THREE.Vector3(0,-9.82,0);
+  PHYS.DEFAULT_GRAVITY = new THREE.Vector3(0,-9.82,0);
   PHYS.DEFAULT_NORMDIST = 0.1;
   PHYS.DEFAULT_MASS = 1.00;
 
@@ -60,14 +60,10 @@ function PHYS(){
     PHYS._normDist = Math.abs(nd);
   }
 
-  PHYS.render = function(PE, deltaTime){
-  }
-
   PHYS.remove = function(inObj){  //write "update parent", used if object removed from a group
     if(inObj.typeOf == "Group")
     {
-      var tempLength = inObj.numberOfChildren;
-      for(var i = 0; i < tempLength; ++i)
+      for(var i = 0; i < inObj.numberOfChildren; ++i)
       {
         if(inObj.PHYSChildren[i].typeOf == "Group")
         {
@@ -133,6 +129,23 @@ function PHYS(){
       }
     }
   }
+
+
+  //RENDER
+  PHYS.render = function(engine, dt){  //GETDELTA ÄR FALIGT! ANVÄND INTE MER ÄN EN GÅNG!
+    var x = 0;
+    var y = 1;
+    var z = 2;
+
+    var e = engine;
+    var arr = engine.movableRenderArray;
+    for(var i = 0; i < arr.length; ++i)
+    {
+      arr[i].THREEObj.translateY(-2 * dt);
+    }
+  }
+
+
 }
 
 
@@ -151,6 +164,12 @@ function PHYSObject(inObj, inState){
   _OBJECT.parentID; //THREE.js-ID of parent to this.
   _OBJECT.THREEObj; //Holds the actual THREE OBJECT
   _OBJECT.PHYSChildren = [];
+  //QUESTIONABLE
+  _OBJECT.initialVelXYZ = new THREE.Vector3(0,0,0);
+  _OBJECT.velXYZ = new THREE.Vector3(0,0,0);
+  _OBJECT.accXYZ = new THREE.Vector3(0,0,0);
+  _OBJECT.old_pos;
+  //_OBJECT.forceXYZ = new THREE.Vector3(0,0,0);
 
   if(inObj.type == "Mesh")
   {
@@ -160,6 +179,7 @@ function PHYSObject(inObj, inState){
     _OBJECT.THREEid = inObj.id;
     _OBJECT.mass = _OBJECT.DEFAULT_MASS;
     _OBJECT.numberOfChildren = 0;
+    _OBJECT.old_pos = new THREE.Vector3(inObj.position.x,inObj.position.y,inObj.position.z);
     if(inObj.parent != null)
     {
       _OBJECT.parentID = inObj.parent.id; //If id = 1, then object is direct child of SCENE
