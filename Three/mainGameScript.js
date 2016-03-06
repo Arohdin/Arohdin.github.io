@@ -41,15 +41,13 @@ $(document).ready(function(){
   floor1 = new THREE.Mesh(geometry5, material5);
 
 
-
-
   //CREATE GROUPS
   group1 = new THREE.Group();
     group1.add(cube2);
-    group1.add(cube3);
   group2 = new THREE.Group();
     group2.add(cube4);
   group1.add(group2);
+  group1.add(cube3);
 
   //ADDS TO SCENE
   scene.add(cube1);
@@ -91,7 +89,8 @@ $(document).ready(function(){
   physEngine.add(PHYS_CUBE);
   physEngine.add(PHYS_GROUP);
 
-  PHYS_GROUP.listChildrenByID();
+  //DEBUGG
+  physEngine.remove(PHYS_GROUP);
 
   //CALLS RENDER
   render();
@@ -128,6 +127,6 @@ function keyEvents(){
   }
   if(keyPressed[32] == true)
   {
-    
+
   }
 }

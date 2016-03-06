@@ -63,7 +63,75 @@ function PHYS(){
   PHYS.render = function(PE, deltaTime){
   }
 
-  PHYS.remove = function(){
+  PHYS.remove = function(inObj){  //write "update parent", used if object removed from a group
+    if(inObj.typeOf == "Group")
+    {
+      var tempLength = inObj.numberOfChildren;
+      for(var i = 0; i < tempLength; ++i)
+      {
+        if(inObj.PHYSChildren[i].typeOf == "Group")
+        {
+          console.log("[WARNING] PHYS.remove(): Object of type 'Group', content of Group was also removed.")
+          PHYS.remove(inObj.PHYSChildren[i]);
+        }
+        else if(inObj.PHYSChildren[i].typeOf == "Mesh")
+        {
+          if(inObj.state == PHYS.STATIC)
+          {
+            var p = PHYS.staticRenderArray.length;
+            for(var t = 0; t < p; ++t)
+            {
+              if(inObj.PHYSChildren[i] == PHYS.staticRenderArray[t])
+              {
+                PHYS.staticRenderArray.move(t,p-1);
+                PHYS.staticRenderArray.pop();
+                p--;
+              }
+            }
+          }
+          else if(inObj.state == PHYS.MOVABLE)
+          {
+            var p = PHYS.movableRenderArray.length;
+            for(var t = 0; t < p; ++t)
+            {
+              if(inObj.PHYSChildren[i] == PHYS.movableRenderArray[t])
+              {
+                PHYS.movableRenderArray.move(t,p-1);
+                PHYS.movableRenderArray.pop();
+                p--;
+              }
+            }
+          }
+        }
+      }
+    }
+    else if(inObj.typeOf == "Mesh")
+    {
+      if(inObj.state == PHYS.MOVABLE)
+      {
+        for(var i = 0; i < PHYS.movableRenderArray.length; ++i)
+        {
+          if(inObj == PHYS.movableRenderArray[i])
+          {
+            PHYS.movableRenderArray.move(i,PHYS.movableRenderArray.length-1);
+            PHYS.movableRenderArray.pop();
+            break;
+          }
+        }
+      }
+      else if(inObj.state == PHYS.STATIC)
+      {
+        for(var i = 0; i < PHYS.staticRenderArray.length; ++i)
+        {
+          if(inObj == PHYS.staticRenderArray[i])
+          {
+            PHYS.staticRenderArray.move(i,PHYS.staticRenderArray.length-1);
+            PHYS.staticRenderArray.pop();
+            break;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -92,6 +160,10 @@ function PHYSObject(inObj, inState){
     _OBJECT.THREEid = inObj.id;
     _OBJECT.mass = _OBJECT.DEFAULT_MASS;
     _OBJECT.numberOfChildren = 0;
+    if(inObj.parent != null)
+    {
+      _OBJECT.parentID = inObj.parent.id; //If id = 1, then object is direct child of SCENE
+    }
   }
   else if(inObj.type == "Group")  //MAKE THIS RECURSIVE
   {
@@ -149,3 +221,15 @@ PHYSObject.prototype.getChildByID = function(key){  //Return -1 if not found
     }
   }
 }
+
+
+//MISC FUNCTIONS
+Array.prototype.move = function (old_index, new_index) {
+    if (new_index >= this.length) {
+        var k = new_index - this.length;
+        while ((k--) + 1) {
+            this.push(undefined);
+        }
+    }
+    this.splice(new_index, 0, this.splice(old_index, 1)[0]);
+};
