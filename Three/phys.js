@@ -20,46 +20,37 @@ function PHYS(){
 
   //FUNCTIONS
   PHYS.add = function(obj){       //DETTA KAN GÖRAS TILL EN. KOLLA MOVE/STATIC INNUTILL!
-    if(obj.state == PHYS.STATIC)
+
+    if(obj.typeOf == "Group")
     {
-      if(obj.typeOf == "Group")
+      for(var i = 0; i < obj.PHYSChildren.length; ++i)
       {
-        for(var i = 0; i < obj.PHYSChildren.length; ++i)
+        if(obj.PHYSChildren[i].typeOf == "Mesh")
         {
-          if(obj.PHYSChildren[i].typeOf == "Mesh")
-          {
-            PHYS.staticRenderArray.push(obj.PHYSChildren[i]);
-          }
-          else if(obj.PHYSChildren[i].typeOf == "Group")
-          {
-            PHYS.add(obj.PHYSChildren[i]);
-          }
-        }
-      }
-      else if(obj.typeOf == "Mesh")
-      {
-        PHYS.staticRenderArray.push(obj);
-      }
-    }
-    else if(obj.state == PHYS.MOVABLE)
-    {
-      if(obj.typeOf == "Group")
-      {
-        for(var i = 0; i < obj.PHYSChildren.length; ++i)
-        {
-          if(obj.PHYSChildren[i].type == "Mesh")
+          if(obj.PHYSChildren[i].state == PHYS.MOVABLE)
           {
             PHYS.movableRenderArray.push((obj.PHYSChildren[i]));
           }
-          else if(obj.PHYSChildren[i].type == "Group")
+          else
           {
-            PHYS.add(obj.PHYSChildren[i]);
+            PHYS.staticRenderArray.push(obj.PHYSChildren[i]);
           }
         }
+        else if(obj.PHYSChildren[i].typeOf == "Group")
+        {
+          PHYS.add(obj.PHYSChildren[i]);
+        }
       }
-      else if(obj.typeOf == "Mesh")
+    }
+    else if(obj.typeOf == "Mesh")
+    {
+      if(obj.state == PHYS.MOVABLE)
       {
         PHYS.movableRenderArray.push(obj);
+      }
+      else
+      {
+        PHYS.staticRenderArray.push(obj);
       }
     }
   }
@@ -74,7 +65,6 @@ function PHYS(){
 
   PHYS.remove = function(){
   }
-
 }
 
 
@@ -88,9 +78,9 @@ function PHYSObject(inObj, inState){
   _OBJECT.state;  //if static or moveable. (MAKE INHERITABLE)
   _OBJECT.mass; //in kg
   _OBJECT.THREEid;  //ID of object given by THREE.js
-  _OBJECT.children = [];  //ID of children given by THREE.js
+  _OBJECT.children = [];  //Stores children of object (contains THREE Objects)
   _OBJECT.numberOfChildren; //Nmber of children...
-  _OBJECT.parentID; //THREE.js-ID of parent to a child.
+  _OBJECT.parentID; //THREE.js-ID of parent to this.
   _OBJECT.THREEObj; //Holds the actual THREE OBJECT
   _OBJECT.PHYSChildren = [];
 
@@ -131,8 +121,31 @@ function PHYSObject(inObj, inState){
   _OBJECT.setState = function(inState){
     _OBJECT.state = inState;
   }
+}
 
-  _OBJECT.getChild = function(key){
+//PROTOTYPE FUNCTION TO CLASS PHYSObject
+PHYSObject.prototype.listChildrenByID = function(){
+  var str = "THREE ID of children: ";
+  for(var i = 0; i < this.children.length; ++i)
+  {
+    str += this.children[i].id + " ";
   }
+  console.log(str);
+}
 
+PHYSObject.prototype.getChildByID = function(key){  //Return -1 if not found
+  for(var i = 0; i < PHYS.staticRenderArray.length; ++i)
+  {
+    if(PHYS.staticRenderArray[i].THREEid == key)
+    {
+      return PHYS.staticRenderArray[i];
+    }
+  }
+  for(var t = 0; t < PHYS.movableRenderArray.length; ++t)
+  {
+    if(PHYS.movableRenderArray[i].THREEid == key)
+    {
+      return PHYS.movableRenderArray[i];
+    }
+  }
 }

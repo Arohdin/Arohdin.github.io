@@ -91,19 +91,21 @@ $(document).ready(function(){
   physEngine.add(PHYS_CUBE);
   physEngine.add(PHYS_GROUP);
 
+  PHYS_GROUP.listChildrenByID();
+
   //CALLS RENDER
   render();
 });
 
 //RENDER-LOOP
 function render(){
-  keyEvents(c.getDelta());  //Do Key-events
+  keyEvents();  //Do Key-events
   physEngine.render(physEngine, c.getDelta());
   renderer.render(scene, camera);
   requestAnimationFrame(render);
 }
 
-function keyEvents(dt){
+function keyEvents(){
   if(keyPressed[87] == true)
   {
     group1.translateY(0.2);
@@ -123,5 +125,9 @@ function keyEvents(dt){
   {
     group1.translateX(-0.2);
     cube1.translateX(-0.2);
+  }
+  if(keyPressed[32] == true)
+  {
+    
   }
 }
