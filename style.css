@@ -11,7 +11,7 @@ body{
 }
 
 a{
-  font-size: 48pt;
+  font-size: 36pt;
   font-family: 'Roboto', sans-serif;
   color: #ecf0f1;
 }
@@ -42,4 +42,8 @@ li{
 
 #l3{
   margin-left: 10%;
+}
+
+#l4{
+  margin-left: 15%;
 }
