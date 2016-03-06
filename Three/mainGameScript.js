@@ -91,16 +91,16 @@ $(document).ready(function(){
   physEngine.add(PHYS_CUBE);
   physEngine.add(PHYS_GROUP);
 
-  //RENDER
+  //CALLS RENDER
   render();
 });
 
-
+//RENDER-LOOP
 function render(){
-  keyEvents(c.getDelta());
-  requestAnimationFrame(render);
-  physEngine.render(physEngine, c);
+  keyEvents(c.getDelta());  //Do Key-events
+  physEngine.render(physEngine, c.getDelta());
   renderer.render(scene, camera);
+  requestAnimationFrame(render);
 }
 
 function keyEvents(dt){

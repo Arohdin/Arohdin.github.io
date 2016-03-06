@@ -19,7 +19,7 @@ function PHYS(){
   PHYS.staticRenderArray = [];
 
   //FUNCTIONS
-  PHYS.add = function(obj){
+  PHYS.add = function(obj){       //DETTA KAN GÖRAS TILL EN. KOLLA MOVE/STATIC INNUTILL!
     if(obj.state == PHYS.STATIC)
     {
       if(obj.typeOf == "Group")
@@ -69,11 +69,7 @@ function PHYS(){
     PHYS._normDist = Math.abs(nd);
   }
 
-  PHYS.render = function(PE, c){
-    for(var i = 0; i < PE.movableRenderArray.length; ++i)
-    {
-
-    }
+  PHYS.render = function(PE, deltaTime){
   }
 
   PHYS.remove = function(){
@@ -89,7 +85,7 @@ function PHYSObject(inObj, inState){
 
   //VARIABLES
   _OBJECT.typeOf; //group or mesh
-  _OBJECT.state;  //if static or moveable.
+  _OBJECT.state;  //if static or moveable. (MAKE INHERITABLE)
   _OBJECT.mass; //in kg
   _OBJECT.THREEid;  //ID of object given by THREE.js
   _OBJECT.children = [];  //ID of children given by THREE.js
@@ -117,14 +113,12 @@ function PHYSObject(inObj, inState){
 
     if(inObj.parent != null)
     {
-      //If id = 1, then object is direct child of SCENE
-      _OBJECT.parentID = inObj.parent.id;
+      _OBJECT.parentID = inObj.parent.id; //If id = 1, then object is direct child of SCENE
     }
 
     for(var i = 0; i < _OBJECT.numberOfChildren; ++i)
     {
       _OBJECT.children.push(inObj.children[i]);
-      //THIS WILL GET ALL GROUPS AND MESHES WITHIN THE GROUP (recirseive);
       _OBJECT.PHYSChildren.push(new PHYSObject(inObj.children[i], inState));
     }
   }
@@ -139,11 +133,6 @@ function PHYSObject(inObj, inState){
   }
 
   _OBJECT.getChild = function(key){
-
-  }
-
-  _OBJECT.createFromGroup = function(inGroup){
-
   }
 
 }
