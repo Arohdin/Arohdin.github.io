@@ -65,7 +65,7 @@ $(document).ready(function(){
   //EVENTLISTENERS
   window.addEventListener("keydown", function(e){
     keyPressed[e.keyCode] = true;
-    //console.log("KeyCode Pressed: " + e.keyCode);
+    console.log("KeyCode Pressed: " + e.keyCode);
   } ,false);
   window.addEventListener("keyup", function(e){
     keyPressed[e.keyCode] = false;
