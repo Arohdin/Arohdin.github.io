@@ -97,7 +97,7 @@ $(document).ready(function(){
 
 //RENDER-LOOP
 function render(){
-  var dt = c.getDelta();
+  var dt = c.getDelta();  //Create variable time (from start) and send as input parameter, then call time again in function and calc dt.
   keyEvents();  //Do Key-events
   physEngine.render(physEngine, dt);
   renderer.render(scene, camera);

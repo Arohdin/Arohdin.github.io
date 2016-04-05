@@ -67,7 +67,7 @@ function PHYS(){
       {
         if(inObj.PHYSChildren[i].typeOf == "Group")
         {
-          console.log("[WARNING] PHYS.remove(): Object of type 'Group', content of Group was also removed.")
+          console.log("[WARNING] PHYS.remove(): Object of type 'Group', content of Group also removed.")
           PHYS.remove(inObj.PHYSChildren[i]);
         }
         else if(inObj.PHYSChildren[i].typeOf == "Mesh")
