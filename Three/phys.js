@@ -7,12 +7,13 @@ function PHYS(){
   PHYS.STATIC = -1;
   PHYS.MOVABLE = 1;
   PHYS.DEFAULT_GRAVITY = new THREE.Vector3(0,-9.82,0);
-  PHYS.DEFAULT_NORMDIST = 0.1;
+  PHYS.DEFAULT_NORMDIST = 1/20;
   PHYS.DEFAULT_MASS = 1.00;
 
   //VARIABLES
   PHYS._grav = PHYS.DEFAULT_GRAVITY; //gravity variable
   PHYS._normDist = PHYS.DEFAULT_NORMDIST;
+  console.log(PHYS._normDist);
 
   //TO RENDER
   PHYS.movableRenderArray = [];
@@ -132,16 +133,22 @@ function PHYS(){
 
 
   //RENDER
-  PHYS.render = function(engine, dt){  //GETDELTA ÄR FALIGT! ANVÄND INTE MER ÄN EN GÅNG!
-    var x = 0;
-    var y = 1;
-    var z = 2;
-
-    var e = engine;
+  PHYS.render = function(engine, dt){ //use absolute coordinates isntead of translateY (relative)
     var arr = engine.movableRenderArray;
     for(var i = 0; i < arr.length; ++i)
     {
-      arr[i].THREEObj.translateY(-2 * dt);
+      //GET POSITION
+      var position = arr[i].THREEObj....
+      if()
+      {
+        arr[i].velXYZ.set(arr[i].velXYZ.getComponent(0) + (arr[i].accXYZ.getComponent(0)*dt*PHYS._normDist),
+                          arr[i].velXYZ.getComponent(1) + (arr[i].accXYZ.getComponent(1)*dt*PHYS._normDist),
+                          arr[i].velXYZ.getComponent(2) + (arr[i].accXYZ.getComponent(2)*dt*PHYS._normDist));
+
+        arr[i].THREEObj.translateX(arr[i].velXYZ.getComponent(0));
+        arr[i].THREEObj.translateY(arr[i].velXYZ.getComponent(1));
+        arr[i].THREEObj.translateZ(arr[i].velXYZ.getComponent(2));
+      }
     }
   }
 
@@ -152,9 +159,10 @@ function PHYS(){
 function PHYSObject(inObj, inState){
   //NAME
   const _OBJECT = this;
-  const type = "PhysObject";
+  //const type = "PhysObject";
 
   //VARIABLES
+  _OBJECT.type = "PhysObject";
   _OBJECT.typeOf; //group or mesh
   _OBJECT.state;  //if static or moveable. (MAKE INHERITABLE)
   _OBJECT.mass; //in kg
@@ -167,7 +175,7 @@ function PHYSObject(inObj, inState){
   //QUESTIONABLE
   _OBJECT.initialVelXYZ = new THREE.Vector3(0,0,0);
   _OBJECT.velXYZ = new THREE.Vector3(0,0,0);
-  _OBJECT.accXYZ = new THREE.Vector3(0,0,0);
+  _OBJECT.accXYZ = new THREE.Vector3(0,-9.82,0);
   _OBJECT.old_pos;
   //_OBJECT.forceXYZ = new THREE.Vector3(0,0,0);
 

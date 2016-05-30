@@ -5,6 +5,8 @@ var keyPressed = {};
 var physEngine;
 var group1, group2;
 var floor1;
+var counter = 0;
+var timeholder = 0;
 
 var PHYS_CUBE;
 var PHYS_GROUP;
@@ -73,6 +75,7 @@ $(document).ready(function(){
 
   //CLOCK
   c = new THREE.Clock();
+  c.start();
 
   //PHYS
   physEngine = new PHYS();
@@ -97,10 +100,21 @@ $(document).ready(function(){
 
 //RENDER-LOOP
 function render(){
+  counter++;
   var dt = c.getDelta();  //Create variable time (from start) and send as input parameter, then call time again in function and calc dt.
+  //var time = c.getElapsedTime();
+  timeholder = timeholder + dt;
   keyEvents();  //Do Key-events
   physEngine.render(physEngine, dt);
   renderer.render(scene, camera);
+
+  if(timeholder > 1.0)
+  {
+    timeholder = 0;
+    console.log("FPS is: " + counter);
+    counter = 0;
+  }
+
   requestAnimationFrame(render);
 }
 
