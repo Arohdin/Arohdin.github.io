@@ -138,17 +138,13 @@ function PHYS(){
     for(var i = 0; i < arr.length; ++i)
     {
       //GET POSITION
-      var position = arr[i].THREEObj....
-      if()
-      {
-        arr[i].velXYZ.set(arr[i].velXYZ.getComponent(0) + (arr[i].accXYZ.getComponent(0)*dt*PHYS._normDist),
-                          arr[i].velXYZ.getComponent(1) + (arr[i].accXYZ.getComponent(1)*dt*PHYS._normDist),
-                          arr[i].velXYZ.getComponent(2) + (arr[i].accXYZ.getComponent(2)*dt*PHYS._normDist));
+      arr[i].velXYZ.set(arr[i].velXYZ.getComponent(0) + (arr[i].accXYZ.getComponent(0)*dt*PHYS._normDist),
+                        arr[i].velXYZ.getComponent(1) + (arr[i].accXYZ.getComponent(1)*dt*PHYS._normDist),
+                        arr[i].velXYZ.getComponent(2) + (arr[i].accXYZ.getComponent(2)*dt*PHYS._normDist));
 
-        arr[i].THREEObj.translateX(arr[i].velXYZ.getComponent(0));
-        arr[i].THREEObj.translateY(arr[i].velXYZ.getComponent(1));
-        arr[i].THREEObj.translateZ(arr[i].velXYZ.getComponent(2));
-      }
+      arr[i].THREEObj.translateX(arr[i].velXYZ.getComponent(0));
+      arr[i].THREEObj.translateY(arr[i].velXYZ.getComponent(1));
+      arr[i].THREEObj.translateZ(arr[i].velXYZ.getComponent(2));
     }
   }
 
