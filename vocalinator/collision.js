@@ -2,8 +2,8 @@ function collisionDetection()
 {
   const cd = this;
 
-  cd.numCols = 10;
-  cd.numRows = 10;
+  cd.numCols = 20;
+  cd.numRows = 30;
   cd.cellWidth;
   cd.cellHeight;
   cd.AA;
