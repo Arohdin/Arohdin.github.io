@@ -5,7 +5,7 @@ function enemies()
   const e = this;
 
   //const
-  const maxNumber = 32;
+  const maxNumber = 16;
 
   //variables
   e.enemyStack = [];
@@ -38,7 +38,7 @@ function enemies()
   //renders the stack of enemies (calls enemy.render());
   e.renderStack = function(dt)
   {
-    for(var i = 0; i < maxNumber; ++i)
+    for(var i = 0; i < e.enemyStack.length; ++i)
     {
       e.enemyStack[i].render(dt);
     }
@@ -52,12 +52,12 @@ function enemy(){
     const e = this;
 
     //Defaults [low,medhigh] - parameters
-	e._typeHealth = [10,5,1];
+	e._typeHealth = [5,3,1];
 	e._typeDmg = [5,2,1];
-	e._type = ["low", "medium", "high"];
-	e._typeSpeed = [100,130,170];
+	e._type = [0, 1, 2];
+	e._typeSpeed = [50,80,120];
 	e._typeColor = ["#2c3e50", "#8e44ad", "#f39c12"];
-    e._typeSize = [50, 30, 15];
+    e._typeSize = [35, 20, 10];
 
     //type specifics;
     e.health;
@@ -71,7 +71,7 @@ function enemy(){
     //Variables
     e.pos;
     e.angle;
-	
+
     //init
     e.init = function(typeOf)
     {
@@ -102,7 +102,7 @@ function enemy(){
       //drawLineBetween(e.pos, pl.pos, "rgba(231, 76, 60, 0.3)", 0.10);
       e.updatePosition(dt);
       e.draw();
-      drawCollisionMesh(e._collisionRadius, e.pos, "rgba(231, 76, 60, 0.8)");
+      //drawCollisionMesh(e._collisionRadius, e.pos, "rgba(231, 76, 60, 0.8)");
 		//drawCollisionMesh(1,[en.enemyStack[0].pos[0],en.enemyStack[0].pos[1]],"rgba(255,0,0,1.0)");
     }
 

@@ -5,10 +5,18 @@ function projectiles() {
 
   //variables
   pj.skott= [];
+  pj.timeSinceShot;
+  pj.filteredShots = [];
+
+  pj.init= function()
+  {
+    pj.timeSinceShot=clock.getTime();
+  }
 
   //constants
-  const projColors = ["#3498db", "#2ecc71", "#e74c3c"];
+  const projColors = ["#2c3e50", "#8e44ad", "#f39c12"];
   const speed = 1100;
+  const rateOfFire = 150;
 
   //projectile object
   function projectile() {
@@ -18,10 +26,12 @@ function projectiles() {
     pro.radius;
     pro.color;
     pro.direction = [];
+    pro._type;
 
     pro.init = function()
     {
-      pro.radius= 7;
+      pro.radius= 7*_scaleFactor;
+      pro._type = projectileType;
       pro.color = projColors[projectileType];
       var angle =getAngle([mousePos.x, mousePos.y], pl.pos);
       var hype=pl._collisionRadius+ pro.radius;
@@ -47,9 +57,14 @@ function projectiles() {
 
   pj.shoot = function()
   {
-    var ettSkott = new projectile();
-    ettSkott.init();
-    pj.skott.unshift(ettSkott);
+    if((clock.getTime()-pj.timeSinceShot > rateOfFire*timeFactor) && pitch!=NOTLOUD)
+    {
+      var ettSkott = new projectile();
+      ettSkott.init();
+      pj.skott.push(ettSkott);
+      pj.timeSinceShot=clock.getTime();
+    }
+
   }
 
   pj.updateAll= function(deltaT)
@@ -68,9 +83,15 @@ function projectiles() {
     }
   }
 
-  pj.removeProjectile= function()
+  pj.removeProjectiles = function()
   {
-    pj.skott.length--;
+    pj.filteredShots = pj.skott.filter(krock.checkProjectileBorderCollision);
+    pj.skott.length=0;
+    for(i=0;i<pj.filteredShots.length;++i)
+    {
+      pj.skott[i]=pj.filteredShots[i];
+    }
+    pj.filteredShots.length=0;
   }
 
   pj.render = function(deltaT)
