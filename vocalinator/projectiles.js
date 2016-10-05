@@ -14,7 +14,7 @@ function projectiles() {
   }
 
   //constants
-  const projColors = ["#2c3e50", "#8e44ad", "#f39c12"];
+  const projColors = ["#EF4836", "rgb(46, 204, 113)", "#f39c12"];
   const speed = 1100;
   const rateOfFire = 150;
 
@@ -34,7 +34,7 @@ function projectiles() {
       pro._type = projectileType;
       pro.color = projColors[projectileType];
       var angle =getAngle([mousePos.x, mousePos.y], pl.pos);
-      var hype=pl._collisionRadius+ pro.radius;
+      var hype=pl._collisionRadius*0.5;
 
       pro.direction = [Math.cos(angle), -Math.sin(angle)];
       pro.pos = [pl.pos[0] + pro.direction[0]*hype, pl.pos[1] + pro.direction[1]*hype];
@@ -57,8 +57,12 @@ function projectiles() {
 
   pj.shoot = function()
   {
-    if((clock.getTime()-pj.timeSinceShot > rateOfFire*timeFactor) && pitch!=NOTLOUD)
+    if(!paused && (clock.getTime()-pj.timeSinceShot > rateOfFire/timeFactor) && pitch!=NOTLOUD && !pl.teleporting)
     {
+      if(gamepadUsed && !(Math.abs(gp.axes[2])>gamepadThreshold || Math.abs(gp.axes[3])>gamepadThreshold))
+      {
+        return;
+      }
       var ettSkott = new projectile();
       ettSkott.init();
       pj.skott.push(ettSkott);

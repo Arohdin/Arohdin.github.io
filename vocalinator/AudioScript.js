@@ -20,6 +20,7 @@ volumeNode.gain.value = 0.0;
 var errorCallback = function(e) {console.log('Mic error!', e);};
 var high =400, low=200, step =((high-low)/3.0), picth, projectileType;
 const LOW=0, MEDIUM=1, HIGH=2, NOTLOUD=-1;
+var dBThreshold=230;
 
 navigator.getUserMedia({audio: true}, function(stream)
 {
@@ -80,6 +81,15 @@ function getPitch()
   analyzer.getByteFrequencyData(amplitudeArray);
   var max= 0.0;
   var maxIndex=0;
+  for(var i=0;i<amplitudeArray.length;++i)
+  {
+    if(amplitudeArray[i]>max)
+    max=amplitudeArray[i]
+  }
+  if(max<dBThreshold)
+  return NOTLOUD;
+
+  max=0.0;
 
   //Use algorithm to "amplify" the percieved frequency
   for(var i =0; 5*i < Math.floor(analyzer.frequencyBinCount/5); ++i)
@@ -92,30 +102,45 @@ function getPitch()
       maxIndex=i;
     }
   }
-  if(max< 0.5*Math.pow(10.0,47.0)) // 47
-  return NOTLOUD;
 
   return frequencyArray[maxIndex];
 }
 
 function setHigh()
 {
-  high=pitch;
-  calMenu.message="High set to " + Math.floor(high);
-  setTimeout(function ()
+  var temp=pitch;
+
+  if(temp==NOTLOUD)
   {
-    calMenu.message="";
-  }, 2000);
+    hud.setTimedMessage("Louder plz!", TOP_RIGHT, 2);
+    return;
+  }
+  else if(temp <low)
+  {
+    hud.setTimedMessage("Sing higher than low", TOP_RIGHT, 2);
+    return;
+  }
+  high=temp;
+  hud.setTimedMessage("High set to " + Math.floor(high), TOP_RIGHT, 2);
+  setStep();
 }
 
 function setLow()
 {
-  low=pitch;
-  calMenu.message="low set to " + Math.floor(low);
-  setTimeout(function ()
+  var temp=pitch;
+  if(temp==NOTLOUD)
   {
-    calMenu.message="";
-  }, 2000);
+    hud.setTimedMessage("Louder plz!", TOP_RIGHT, 2);
+    return;
+  }
+  else if(temp >high)
+  {
+    hud.setTimedMessage("Sing lower than high", TOP_RIGHT, 2);
+    return;
+  }
+  low=temp;
+  hud.setTimedMessage("low set to " + Math.floor(low), TOP_RIGHT, 2);
+  setStep();
 }
 
 function setStep()
