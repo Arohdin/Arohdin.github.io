@@ -219,7 +219,7 @@ function blackHole(inMass, inDrawRad, inEffectRad, inPos, inRotateTime)
   {
 
   b.sources = {
-    blackHoleSprite: 'images/hole.png'
+    blackHoleSprite: 'https://github.com/Arohdin/Arohdin.github.io/blob/master/vocalinator/Images/hole.png?raw=true'
     };
 
   for(var src in b.sources) {
