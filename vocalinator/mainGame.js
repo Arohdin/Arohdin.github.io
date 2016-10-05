@@ -23,6 +23,10 @@ var backupTime;
 
 var godMode = false;
 var timeFactor = 1.0;
+var enablePlayerTeleport = true;
+var enableProjectileTeleport = true;
+var enableGravity = true;
+
 
 $(window).focus(function()
 {
@@ -157,12 +161,15 @@ $(document).ready(function(){
 	hud.init();
 	pl.loadPlayerImage();
 
-	bh.addHole(1,50,120,[c.width/6		,		c.height/6], 		10);
+	bh.addHole(3,50,120,[c.width/6		,		c.height/6], 		10);
 	bh.addHole(5,50,120,[5*c.width/6	,		c.height/6], 		10);
 	bh.addHole(2,50,120,[5*c.width/6	,		5*c.height/6], 	10);
-	bh.addHole(1,50,120,[3*c.width/6	,		4*c.height/6],	10);
+	bh.addHole(4,50,120,[3*c.width/6	,		4*c.height/6],	10);
 	bh.addHole(6,50,120,[c.width/6		, 	5*c.height/6],	10);
 	bh.linkHoles([0,1,2,3,4]);
+
+//	bh.addHole(10,50,300,[2*c.width/6	,		3*c.height/6],	10);
+//	bh.addHole(10,50,300,[4*c.width/6		, 	3*c.height/6],	10);
 
 
 	//krock.calculateCollision();

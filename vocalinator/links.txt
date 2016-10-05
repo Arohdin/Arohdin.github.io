@@ -1,0 +1,7 @@
+BLACKHOLE: https://github.com/Arohdin/Arohdin.github.io/blob/master/vocalinator/Images/hole.png?raw=true
+
+PLAYER: https://github.com/Arohdin/Arohdin.github.io/blob/master/vocalinator/Images/player.png?raw=true
+
+BACKGROUND: https://github.com/Arohdin/Arohdin.github.io/blob/master/vocalinator/Images/moon.jpg?raw=true
+
+BATTLEFIELD: https://github.com/Arohdin/Arohdin.github.io/blob/master/vocalinator/Images/highResBattlefield.png?raw=tru
