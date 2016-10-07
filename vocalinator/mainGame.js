@@ -20,6 +20,8 @@ var joystickAngle;
 var playerDeath=false, disableCollision=false, wasPressed=false;
 var disablePlayerCollision = false;
 var backupTime;
+var refToPlayer, refToEnemyStack, refToBattlefield, refToProjectiles, refToDeaths, refToBlackHoles, refToCollision;
+var dontSpawnWithin = 0.25;
 
 var godMode = false;
 var timeFactor = 1.0;
@@ -133,7 +135,18 @@ $(document).ready(function(){
 	calMenu=new menu();
 	clock = new Date();
 	hud =new HUD();
-	bh=new holes();
+	battlefield = new walls();
+	deathRow = new deathRow();
+
+	refToPlayer = pl;
+	refToCollision = krock;
+	refToProjectiles = proj;
+	refToEnemyStack = en;
+	refToBattlefield = battlefield;
+	refToDeaths = deathRow;
+	bh=new holes(deathRow);
+	refToBlackHoles = bh;
+
 
 	mainMenu.active=true;
 	mainMenu.addButton("Start");
@@ -143,8 +156,6 @@ $(document).ready(function(){
 	calMenu.addButton("Set low");
 	calMenu.addButton("Back");
 
-	battlefield = new walls();
-	deathRow = new deathRow();
 
 	updateGamepad();
 	if(gp)
@@ -153,23 +164,28 @@ $(document).ready(function(){
 	}
 
 	//Init
-	en.generateStack();
-	krock.generateGrid();
-	krock.init();
-	proj.init();
-	battlefield.init();
+	refToEnemyStack.linkRefs(refToPlayer);
+	refToEnemyStack.generateStack(dontSpawnWithin);
+	refToCollision.linkRefs(refToPlayer, refToEnemyStack, refToProjectiles, refToDeaths);
+	refToCollision.generateGrid();
+	refToCollision.init();
+	refToProjectiles.init(refToPlayer);
+	battlefield.init(refToPlayer);
 	hud.init();
-	pl.loadPlayerImage();
+	refToPlayer.loadPlayerImage();
 
-	bh.addHole(3,50,120,[c.width/6		,		c.height/6], 		10);
-	bh.addHole(5,50,120,[5*c.width/6	,		c.height/6], 		10);
-	bh.addHole(2,50,120,[5*c.width/6	,		5*c.height/6], 	10);
-	bh.addHole(4,50,120,[3*c.width/6	,		4*c.height/6],	10);
-	bh.addHole(6,50,120,[c.width/6		, 	5*c.height/6],	10);
-	bh.linkHoles([0,1,2,3,4]);
+	refToBlackHoles.addHole(3,50,120,[c.width/6		,		c.height/6], 		10);
+	refToBlackHoles.addHole(5,50,120,[5*c.width/6	,		c.height/6], 		10);
+	refToBlackHoles.addHole(2,50,120,[5*c.width/6	,		5*c.height/6], 	10);
+	refToBlackHoles.addHole(4,50,120,[3*c.width/6	,		4*c.height/6],	10);
+	refToBlackHoles.addHole(6,50,120,[c.width/6		, 	5*c.height/6],	10);
+	refToBlackHoles.linkHoles([0,1,2,3,4]);
 
-//	bh.addHole(10,50,300,[2*c.width/6	,		3*c.height/6],	10);
-//	bh.addHole(10,50,300,[4*c.width/6		, 	3*c.height/6],	10);
+	refToBlackHoles.allHoles[0].setTimeout(10000);
+	refToBlackHoles.allHoles[0].isTimeDependant(true);
+
+	//refToBlackHoles.addHole(10,50,300,[2*c.width/6	,		3*c.height/6],	10);
+	//refToBlackHoles.addHole(10,50,300,[4*c.width/6		, 	3*c.height/6],	10);
 
 
 	//krock.calculateCollision();
@@ -198,7 +214,7 @@ $(window).resize(function(){
 	}
 	hud.resize();
 
-	krock.updateCells();
+	refToCollision.updateCells();
 
 });
 
@@ -215,23 +231,24 @@ function draw()
 	//krock.drawGrid();
 
 	//projectile Collision
-	proj.removeProjectiles();
+	refToProjectiles.removeProjectiles();
 
 	dealWithGamepad();
 
 	//Renders
 	battlefield.drawImages();
-	bh.renderHoles(clock.getTime() - prevTime);	//in parameter is dt in ms
-	krock.updateCells();
+	refToBlackHoles.updateHoles(clock.getTime() - prevTime);
+	refToBlackHoles.renderHoles((clock.getTime() - prevTime)/1000);	//in parameter is dt in ms
+	refToCollision.updateCells();
 	//Collision is disabled when player is killed so that so that playerDeath isn't reset every time collision is checked after player has disabled
 	if(!disableCollision)
-	krock.calculateCollision((clock.getTime() - prevTime)/1000);
-	bh.renderLinks(clock.getTime() - prevTime);
-	proj.shoot();
-	en.renderStack((clock.getTime() - prevTime)/1000);	//render for enemies
-	deathRow.draw((clock.getTime() - prevTime)/1000);
-	proj.render((clock.getTime() - prevTime)/1000); // render projectiles
-	pl.render((clock.getTime() - prevTime)/1000);	//render for player
+	refToCollision.calculateCollision((clock.getTime() - prevTime)/1000);
+	refToBlackHoles.renderLinks(clock.getTime() - prevTime);
+	refToProjectiles.shoot();
+	refToEnemyStack.renderStack((clock.getTime() - prevTime)/1000);	//render for enemies
+	refToDeaths.draw((clock.getTime() - prevTime)/1000);
+	refToProjectiles.render((clock.getTime() - prevTime)/1000); // render projectiles
+	refToPlayer.render((clock.getTime() - prevTime)/1000);	//render for player
 	hud.draw();
 
 	if(dealWithDeath())
@@ -256,8 +273,8 @@ function getMousePos(c, evt) {
 function getJoystickPos()
 {
 		return{
-			x: pl.pos[0] + gp.axes[2]*crosshairRadius*_scaleFactor,
-			y: pl.pos[1] + gp.axes[3]*crosshairRadius*_scaleFactor
+			x: refToPlayer.pos[0] + gp.axes[2]*crosshairRadius*_scaleFactor,
+			y: refToPlayer.pos[1] + gp.axes[3]*crosshairRadius*_scaleFactor
 		};
 
 }
@@ -285,14 +302,15 @@ function drawMenu()
 //Resets enemyStack basically
 function respawnEnemies()
 {
-	en.enemyStack=[];
-	en.generateStack();
+	dontSpawnWithin = 0.15;
+	refToEnemyStack.enemyStack=[];
+	refToEnemyStack.generateStack(dontSpawnWithin);
 }
 
 //resets enemies and player
 function resetGame() {
-	pl.pos=[c.width/2, c.height/2];
-	pl.vel=[0.0, 0.0];
+	refToPlayer.pos=[c.width/2, c.height/2];
+	refToPlayer.vel=[0.0, 0.0];
 	respawnEnemies();
 }
 
@@ -332,10 +350,10 @@ function resume()
 function dealWithDeath()
 {
 	if(playerDeath)
-	pl.lives--;
+	refToPlayer.lives--;
 
 	var liveHUD="";
-	for(var i = 1; i<=pl.lives; ++i)
+	for(var i = 1; i<=refToPlayer.lives; ++i)
 	{
 		liveHUD = liveHUD + " * ";
 	}
@@ -344,7 +362,7 @@ function dealWithDeath()
 	if(playerDeath)
 	{
 		playerDeath=false;
-		if(pl.lives>0) //resets the field for next round
+		if(refToPlayer.lives>0) //resets the field for next round
 		{
 			pause(); //prevents movement and aiming durring countdown
 			hud.countdown(function()
@@ -355,7 +373,7 @@ function dealWithDeath()
 			});
 			return false;
 		}
-		else if(pl.lives==0) // Game over man!
+		else if(refToPlayer.lives==0) // Game over man!
 		{
 			pause(); //prevents movement and aiming durring kill screen
 			hud.setTimedMessage("GAME OVER", MIDDLE,2);
@@ -366,7 +384,7 @@ function dealWithDeath()
 				mainMenu.active=true;
 				requestAnimationFrame(drawMenu); //draw the menu again
 				resetGame(); // reset for new game
-				pl.lives=STARTLIVES; //reset lives
+				refToPlayer.lives=STARTLIVES; //reset lives
 				disableCollision=false; // enable collission for next game
 			},2000);
 			return true;
@@ -383,13 +401,13 @@ function dealWithGamepad()
 		{
 			gamepadUsed=true;
 			mousePos=getJoystickPos();
-			joystickAngle=getAngle([mousePos.x, mousePos.y], pl.pos);
+			joystickAngle=getAngle([mousePos.x, mousePos.y], refToPlayer.pos);
 		}
 		else if(gamepadconnected && gamepadUsed)
 		{
 			mousePos={
-				x:pl.pos[0]+pl._collisionRadius*_scaleFactor*Math.cos(joystickAngle),
-				y:pl.pos[1]-pl._collisionRadius*_scaleFactor*Math.sin(joystickAngle)
+				x:refToPlayer.pos[0]+refToPlayer._collisionRadius*_scaleFactor*Math.cos(joystickAngle),
+				y:refToPlayer.pos[1]-refToPlayer._collisionRadius*_scaleFactor*Math.sin(joystickAngle)
 			};
 		}
 	}
