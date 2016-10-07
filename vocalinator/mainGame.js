@@ -181,7 +181,15 @@ $(document).ready(function(){
 	refToBlackHoles.addHole(6,50,120,[c.width/6		, 	5*c.height/6],	10);
 	refToBlackHoles.linkHoles([0,1,2,3,4]);
 
-	refToBlackHoles.allHoles[0].setTimeout(10000);
+	refToBlackHoles.allHoles[2].setTimeout(10000);
+	refToBlackHoles.allHoles[2].isTimeDependant(true);
+	refToBlackHoles.allHoles[4].setTimeout(15000);
+	refToBlackHoles.allHoles[4].isTimeDependant(true);
+	refToBlackHoles.allHoles[2].setTimeout(25000);
+	refToBlackHoles.allHoles[2].isTimeDependant(true);
+	refToBlackHoles.allHoles[1].setTimeout(35000);
+	refToBlackHoles.allHoles[1].isTimeDependant(true);
+	refToBlackHoles.allHoles[0].setTimeout(35000);
 	refToBlackHoles.allHoles[0].isTimeDependant(true);
 
 	//refToBlackHoles.addHole(10,50,300,[2*c.width/6	,		3*c.height/6],	10);
