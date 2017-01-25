@@ -3,13 +3,15 @@ const MULTIPLIER = 100;
 var c, ctx;
 var mp;
 const GRAVITY = 9.82 * MULTIPLIER;
-const N = 10;
+const N = 4;
 const NUM = N*N;
-const K = 500;
+const K = 600;
 var points = [];
 var lastTime;
 var GLOBALDATA = [];
-const SPRINGRESTLENGTH = 0;
+const SPRING_REST_LENGTH = 0;
+const MAX_SPRING_DISTANCE = 150;
+const SPACING = 50;
 
 $(document).ready(function(){
   c = document.getElementById("theCanvas");
@@ -79,7 +81,7 @@ function debugForces(dt)
   var dy1 = mp.y - massPos1.y;
   var hyp = Math.sqrt(Math.pow(dx1,2) + Math.pow(dy1,2));
 
-  if(hyp > SPRINGRESTLENGTH)
+  if(hyp > MAX_SPRING_DISTANCE)
   {
     var r = controll(hyp, dx1, dy1);
     dx1 = r.dx;
@@ -94,7 +96,7 @@ function debugForces(dt)
   var ax1 = fkx1/mass1;
   var ay1 = fky1/mass1;
 
-  if(hyp < 50)
+  if(hyp < SPRING_REST_LENGTH)
   {
     ax1 = 0;
     ay1 = 0;
@@ -112,7 +114,7 @@ function debugForces(dt)
   var dy2 = massPos1.y - massPos2.y;
   hyp = Math.sqrt(Math.pow(dx2,2) + Math.pow(dy2,2));
 
-  if(hyp > SPRINGRESTLENGTH)
+  if(hyp > MAX_SPRING_DISTANCE)
   {
     var r = controll(hyp, dx2, dy2);
     dx2 = r.dx;
@@ -127,7 +129,7 @@ function debugForces(dt)
   var ax2 = fkx2/mass2;
   var ay2 = fky2/mass2;
 
-  if(hyp < 50)
+  if(hyp < SPRING_REST_LENGTH)
   {
     ax2 = 0;
     ay2 = 0;
@@ -145,7 +147,7 @@ function debugForces(dt)
   var dy3 = massPos2.y - massPos3.y;
   var hyp = Math.sqrt(Math.pow(dx3,2) + Math.pow(dy3,2));
 
-  if(hyp > SPRINGRESTLENGTH)
+  if(hyp > MAX_SPRING_DISTANCE)
   {
     var r = controll(hyp, dx3, dy3);
     dx3 = r.dx;
@@ -160,7 +162,7 @@ function debugForces(dt)
   var ax3 = fkx3/mass3;
   var ay3 = fky3/mass3;
 
-  if(hyp < 50)
+  if(hyp < SPRING_REST_LENGTH)
   {
     ax3 = 0;
     ay3 = 0;
@@ -178,7 +180,7 @@ function debugForces(dt)
 
 function controll(hyp, x,y)
 {
-  var scale = 200/hyp;
+  var scale = MAX_SPRING_DISTANCE/hyp;
 
   var dx1 = Math.sqrt(scale) * x;
   var dy1 = Math.sqrt(scale) * y;
@@ -270,7 +272,7 @@ function init()
   {
     //right, under, Left, top
     ids = [i+1, i+N, i-1, i-N];
-    points[i] = new point((150  + i*50) - Math.floor(i/N)*50*N, 75 + Math.floor(i/N)*50, ids);
+    points[i] = new point((150  + i*SPACING) - Math.floor(i/N)*SPACING*N, 75 + Math.floor(i/N)*SPACING, ids);
   }
   lastTime = Date.now();
 
@@ -290,91 +292,98 @@ function draw() {
 
   ctx.clearRect(0,0,800,800);
 
-  updatePosition(dt);
-  checkBounds();
-
-  drawLines();
   drawDots();
+
+  calculate(dt);
 
   requestAnimationFrame(draw);
 }
 
 
-
-
-function updatePosition(dt)
+function calculate(dt)
 {
-  var p, prevData, ax, ay, newAcc;
-  for(var i = N; i < NUM; ++i)
+  for(var id = N; id < NUM; ++id)
   {
-    p = points[i].getPos();
-    prevData = points[i].getPrev();
-    ax = prevData.acc.x*0.75;
-    ay = prevData.acc.y*0.7 + GRAVITY*dt;
+    var positionArray, newAx, newAy, hyp;
+    var prevAcc = points[id].getPrev();
+        prevAcc = prevAcc.acc;
+    var retVal = getRelevantIds(points[id].getIds(), id);
+    var retDelta = getDeltaDistances(retVal, id);
+    var netFx = 0;
+    var netFy = 0;
+    var netAx = 0;
+    var netAy = 0;
 
-    points[i].setPos(p.x + ax, p.y + ay);
-    points[i].setPrev(ax,ay);
+    for(var it = 0; it < retDelta.length; ++it)
+    {
+      netFx += (K*retDelta[it].delta.dx);
+      netFy += (K*retDelta[it].delta.dy);
+    }
+
+    newAx = netFx/points[id].getMass();
+    newAy = netFy/points[id].getMass();
+
+
+    netAx = prevAcc.x*0.75 - newAx;
+    netAy = prevAcc.y*0.7 - newAy + GRAVITY;
+
+    move(dt, {ax:netAx, ay:netAy}, id);
+
   }
 }
+
+function move(dt, accs, currID)
+{
+  var tp = points[currID].getPrev();
+  var tax = accs.ax*dt;
+  var tay = accs.ay*dt
+  points[currID].setPos(tp.pos.x + tax, tp.pos.y + tay);
+  points[currID].setPrev(tax,tay);
+}
+
+function getDeltaDistances(data, currID)
+{
+  var temp = [];
+  for(var h = 0; h < data.length; ++h)
+  {
+    var currPos = points[currID].getPos();
+    var dynPos = points[data[h]].getPos();
+    var tempHyp =  Math.sqrt(Math.pow(currPos.x - dynPos.x,2) + Math.pow(currPos.y - dynPos.y,2));
+    temp.push({delta:{dx:(currPos.x - dynPos.x), dy:(currPos.y - dynPos.y)}, hyp:tempHyp});
+  }
+  return temp;
+}
+
+function getRelevantIds(data, currID)
+{
+  var temp = [];
+  for(var j = 0; j < 4; ++j)
+  {
+    if(data[j] >= 0 && data[j] < NUM)
+    {
+      if(0 == currID%N && data[j] == currID-1){}
+      else {
+        temp.push(data[j]);
+      }
+    }
+  }
+  return temp;
+}
+
+
 
 function drawDots()
 {
   ctx.fillStyle = "red";
-  var pos;
-
   for(var i = 0; i < NUM; ++i)
   {
-    p = points[i].getPos();
+    var pos = points[i].getPos();
     ctx.beginPath();
-    ctx.arc(p.x, p.y,5,0,2*Math.PI);
+    ctx.arc(pos.x, pos.y, 5, 0, 2*Math.PI);
     ctx.fill();
   }
 }
 
-function drawLines()
-{
-  var p, pn, pts;
-  for(var i = 0; i < NUM; ++i)
-  {
-    p = points[i].getPos();
-    pts = points[i].getIds();
-    for(var q = 0; q < 2; ++q)
-    {
-      if(pts[q] > 0 && pts[q] < N*N && 0 != (i+1)%N)
-      {
-        pn = points[pts[q]].getPos();
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
-        ctx.lineTo(pn.x, pn.y);
-        ctx.stroke();
-      }
-    }
-  }
-  for(var i = 0; i < (N-1); ++i)
-  {
-    p = points[(N-1) + i*N].getPos();
-    pn = points[(N-1) + (i+1)*N].getPos();
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-    ctx.lineTo(pn.x, pn.y);
-    ctx.stroke();
-  }
-}
-
-
-function checkBounds()
-{
-  var p;
-  for(var i = 0; i < NUM; ++i)
-  {
-    p = points[i].getPos();
-    if(p.y > 800)
-    {
-      points[i].setPos(p.x,800);
-      points[i].setPrev(0,0);
-    }
-  }
-}
 
 
 
