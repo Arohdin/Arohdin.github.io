@@ -9,6 +9,7 @@ const K = 500;
 var points = [];
 var lastTime;
 var GLOBALDATA = [];
+const SPRINGRESTLENGTH = 0;
 
 $(document).ready(function(){
   c = document.getElementById("theCanvas");
@@ -78,7 +79,7 @@ function debugForces(dt)
   var dy1 = mp.y - massPos1.y;
   var hyp = Math.sqrt(Math.pow(dx1,2) + Math.pow(dy1,2));
 
-  if(hyp > 200)
+  if(hyp > SPRINGRESTLENGTH)
   {
     var r = controll(hyp, dx1, dy1);
     dx1 = r.dx;
@@ -109,9 +110,9 @@ function debugForces(dt)
   var prevData2 = points[2].getPrev();
   var dx2 = massPos1.x - massPos2.x;
   var dy2 = massPos1.y - massPos2.y;
-  var hyp = Math.sqrt(Math.pow(dx2,2) + Math.pow(dy2,2));
+  hyp = Math.sqrt(Math.pow(dx2,2) + Math.pow(dy2,2));
 
-  if(hyp > 200)
+  if(hyp > SPRINGRESTLENGTH)
   {
     var r = controll(hyp, dx2, dy2);
     dx2 = r.dx;
@@ -144,7 +145,7 @@ function debugForces(dt)
   var dy3 = massPos2.y - massPos3.y;
   var hyp = Math.sqrt(Math.pow(dx3,2) + Math.pow(dy3,2));
 
-  if(hyp > 200)
+  if(hyp > SPRINGRESTLENGTH)
   {
     var r = controll(hyp, dx3, dy3);
     dx3 = r.dx;
