@@ -76,6 +76,14 @@ function debugForces(dt)
   var prevData1 = points[1].getPrev();
   var dx1 = mp.x - massPos1.x;
   var dy1 = mp.y - massPos1.y;
+  var hyp = Math.sqrt(Math.pow(dx1,2) + Math.pow(dy1,2));
+
+  if(hyp > 200)
+  {
+    var r = controll(hyp, dx1, dy1);
+    dx1 = r.dx;
+    dy1 = r.dy;
+  }
 
   var fkx1 = (-K*dx1)/1.5;
   var fky1 = -K*dy1;
@@ -84,6 +92,12 @@ function debugForces(dt)
 
   var ax1 = fkx1/mass1;
   var ay1 = fky1/mass1;
+
+  if(hyp < 50)
+  {
+    ax1 = 0;
+    ay1 = 0;
+  }
 
   var netForceX1 = prevData1.acc.x - ax1;
   var netForceY1 = prevData1.acc.y - ay1 + GRAVITY;
@@ -95,6 +109,14 @@ function debugForces(dt)
   var prevData2 = points[2].getPrev();
   var dx2 = massPos1.x - massPos2.x;
   var dy2 = massPos1.y - massPos2.y;
+  var hyp = Math.sqrt(Math.pow(dx2,2) + Math.pow(dy2,2));
+
+  if(hyp > 200)
+  {
+    var r = controll(hyp, dx2, dy2);
+    dx2 = r.dx;
+    dy2 = r.dy;
+  }
 
   var fkx2 = (-K*dx2)/2;
   var fky2 = -K*dy2;
@@ -103,6 +125,12 @@ function debugForces(dt)
 
   var ax2 = fkx2/mass2;
   var ay2 = fky2/mass2;
+
+  if(hyp < 50)
+  {
+    ax2 = 0;
+    ay2 = 0;
+  }
 
   var netForceX2 = prevData1.acc.x + prevData2.acc.x - ax2;
   var netForceY2 = prevData1.acc.y + prevData2.acc.y - ay2 + GRAVITY;
@@ -114,6 +142,14 @@ function debugForces(dt)
   var prevData3 = points[3].getPrev();
   var dx3 = massPos2.x - massPos3.x;
   var dy3 = massPos2.y - massPos3.y;
+  var hyp = Math.sqrt(Math.pow(dx3,2) + Math.pow(dy3,2));
+
+  if(hyp > 200)
+  {
+    var r = controll(hyp, dx3, dy3);
+    dx3 = r.dx;
+    dy3 = r.dy;
+  }
 
   var fkx3 = (-K*dx3)/3;
   var fky3 = -K*dy3;
@@ -123,6 +159,12 @@ function debugForces(dt)
   var ax3 = fkx3/mass3;
   var ay3 = fky3/mass3;
 
+  if(hyp < 50)
+  {
+    ax3 = 0;
+    ay3 = 0;
+  }
+
   var netForceX3 = prevData1.acc.x + prevData2.acc.x + prevData3.acc.x - ax3;
   var netForceY3 = prevData1.acc.y + prevData2.acc.y + prevData3.acc.y - ay3 + GRAVITY;
 
@@ -131,6 +173,18 @@ function debugForces(dt)
   debugCalc(dt, pack1, pack2, pack3);
 
 }
+
+
+function controll(hyp, x,y)
+{
+  var scale = 200/hyp;
+
+  var dx1 = Math.sqrt(scale) * x;
+  var dy1 = Math.sqrt(scale) * y;
+
+  return {dx:dx1, dy:dy1};
+}
+
 
 function debugCalc(dt, accs, accs2, accs3)
 {
