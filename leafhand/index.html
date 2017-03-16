@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>LiveLeaf</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!-- De tredjepartsbibliotek som används i koden -->
+    <!-- <script type ="text/javascript" src = "./THREE/three.js"> </script> -->
+    <script type="text/javascript" src="./MOD3-master/examples/Three/three.min.js"></script>
+    <script type="text/javascript" src="MOD3-master/build/mod3.bundle.js"></script>
+    <script type="text/javascript" src="./MOD3-master/src/plugins/Three/Three.js"></script> 
+    <script type="text/javascript" src="./MOD3-master/examples/js/Tween.js"></script>
+    <script type="text/javascript" src="./Loaders/OBJLoader.js"></script>
+    <script type="text/javascript" src="./Loaders/MTLLoader.js"></script>    
+    <script type ="text/javascript" src = "./TrackballControls.js"> </script>
+
+     <!-- Egna filer -->
+    <script type ="text/javascript" src = "wind.js"> </script>
+    <script type ="text/javascript" src = "setup.js"> </script>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+
+    <!-- Ikon -->
+    <link rel="icon" href="./images/leaf.png">
+
+</head>
+    <body>
+        <div id="upper" onmouseover="disableTrackball()">
+                
+            <!-- Vänstra delen av headern -->
+            <div id="header_left" style="width: 70%; float: left;">                 
+                 <!--<img id="logo" src="images/leaf.png" alt="logga" style="width:130px;height:80px;"> -->
+                 <img id="logo" src="images/leaf.png" alt="logga" > 
+                 <!-- <h2 style="color:white">Leafin' la vida loca</h2> -->
+
+            </div>
+            
+            <!-- Högra delen av headern -->
+            <div id="header_right">
+                <!-- Slidebar, http://www.w3schools.com/jsref/dom_obj_range.asp -->
+                <input type="range" id="myRange" max="100" value="0" step="5" onmousemove="setWind()">
+
+                <!-- Slidebar 2, ändra vindpust -->
+                <input type="range" id="myRange2" max="100" value="0" step="5">
+
+                <!-- Knapp -->
+                <button id="wind_burst" onclick="burst()">Apply wind burst</button>
+
+                <!-- Drop-down meny, http://www.w3schools.com/jsref/event_onchange.asp -->
+                <select id="mySelect" onclick="disableTrackball" onchange="dropDown()">
+                    <option value="Välj stad">Choose city
+                    <option value="London">London
+                    <option value="Dubai">Dubai
+                    <option value="Norrköping">Norrköping
+                </select>
+
+                <!-- Texter -->
+                <h3 id="wind"> Wind </h3>
+                <h3 id="burst"> Burst </h3>
+
+            </div>
+        </div>
+        
+        <script>
+            //Konstant vind
+            function setWind() {
+            var x = document.getElementById("myRange").value;
+            u = x;
+            }
+
+            //Vindpust
+            function setWindBurst() {
+            var x = document.getElementById("myRange2").value;
+            u = x;
+            }
+
+            //Nollställ vinden
+            function reset(){
+             	var x = document.getElementById("myRange").value;
+                u = x;
+            }
+
+            //Återställer till bladets normala hastighet efter vindpust
+            function burst() {
+                setWindBurst(); 
+                setTimeout(reset,100);
+            };
+
+            //Drop-down meny för val av stad
+            function dropDown() {
+                var windrate;
+                var x = document.getElementById("mySelect").value;
+                
+                if (x == "London")
+                    u = 20;
+                else if (x == "Dubai")
+                    u = 40;
+                else if (x == "Norrköping")
+                    u = 100;
+                else
+                    u = 0;
+            }
+
+            //Stänger av & på trackballen.
+            function disableTrackball(){
+                controls.enabled = false;                
+            }
+
+            function enableTrackball(){
+                controls.enabled = true;                
+            }       
+        </script>
+            <div id="leaf" style="z-index: -100" onmouseover="enableTrackball()">     
+        <script>
+            //Variabler för renderingsfönster och kamera
+            var container;
+            var renderer;
+            var scene;
+            var camera;
+            
+            //Variabler för fysik
+            var p = 0;  // tryck
+            var rho = 1.2; // densitet hos luft (vid 20 grader celcius)
+            var u = 0; // vindhastighet (m/s)
+            var g = 9.82; // tyngdacceleration 
+            var A = 0.005; // lövets area (m^2)
+            var m = 0.01; // lövets massa (kg)
+            var r = 0.05; // tryckpunktsradie (m) 
+            var I = 1 * Math.pow(10,-7); // tröghetsmoment 
+            var k = 0.8; // fjäderkonstant
+            var c = 0.0002; // dämpningskonstant
+            var h = 0.0005; // steglängd
+            var y = 2;
+
+            var force_wind;
+            var force_res;
+            var torque_res;
+            var angle_acc
+
+            //Variabler för Euler
+            var y_prev;
+            var y_deriv;
+            var theta = 0;
+            var w = 0;
+            
+            //Rotationsaxel
+            var axis = new THREE.Vector3(0,0,1);
+
+            //Variabler till löv
+            leaf_positions = [];
+            leaves = [];
+            noLeaves = 10;
+
+            init();
+            animate();
+            
+            //Initiera programmet
+            function init() {              
+                
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(90, window.innerWidth/window.innerHeight, .1,1000);
+                camera.position.z = 200;
+                camera.position.y = 200;
+
+                scene.add( camera );
+
+                controls = new THREE.TrackballControls(camera);
+                controls.rotateSpeed = 1.0;
+                controls.zoomSpeed = 1.2;
+                controls.panSpeed = 0.8;
+                controls.noZoom = false;
+                controls.noPan = false;
+                controls.staticMoving = true;
+                controls.dynamicDampingFactor = 0.3;
+                controls.target.set(0.0, 150.0, 0.0);
+
+                //Träd------------------------------------------------------------------------------------------
+                var mtlLoaderTree = new THREE.MTLLoader();
+                mtlLoaderTree.load("Models/Tree.mtl", function (materials){
+
+        			materials.preload();
+        			var objLoader = new THREE.OBJLoader();
+        			objLoader.setMaterials(materials);
+
+                    objLoader.load("Models/Tree.obj", function(mesh){
+    				    scene.add(mesh);
+
+        				mesh.position.x += 0.0;
+        				mesh.position.y += -80.0;
+        				mesh.position.z += 9.0;
+        				mesh.scale.set(50,50,50);
+                    })                   
+                })
+
+                //Mark------------------------------------------------------------------------------------------
+                var mtlLoaderGround = new THREE.MTLLoader();
+                mtlLoaderGround.load("Models/Ground.mtl", function (materials){
+
+        			materials.preload();
+        			var objLoader = new THREE.OBJLoader();
+        			objLoader.setMaterials(materials);
+
+                    objLoader.load("Models/Ground.obj", function(mesh){
+        				mesh.position.x += 0.0;
+        				mesh.position.y += -80.0;
+        				mesh.position.z += 9.0;
+        				mesh.scale.set(60,80,60);
+                    })
+                })
+
+                //Ljus------------------------------------------------------------------------------------------
+                var hemLight = new THREE.HemisphereLight(0xffe5bb, 0xFFBF00, 1.5);
+                scene.add(hemLight)				
+
+                var pointLight1 = new THREE.PointLight( 0xffffff, 1, 2000, 2);
+                pointLight1.position.set( 600, 400, 600 );
+                scene.add( pointLight1 );
+
+                //Golv------------------------------------------------------------------------------------------
+                var size = 200, step = 40;
+                var geometry_line = new THREE.Geometry();
+                var material_line = new THREE.LineBasicMaterial({color: 'grey'});
+                var line = new THREE.Line(geometry_line, material_line, THREE.LinePieces)
+
+                //for-loop för att skapa linjer
+                for(var i = - size; i <= size; i += step){
+
+                    geometry_line.vertices.push(new THREE.Vector3(-size, -0.4, i))
+                    geometry_line.vertices.push(new THREE.Vector3(size, -0.4, i))
+                    geometry_line.vertices.push(new THREE.Vector3(i, -0.4, -size))
+                    geometry_line.vertices.push(new THREE.Vector3(i, -0.4, size))
+                }
+
+                line.position.y += -80.0;
+                
+                //Lägg till linjer i scenen
+                scene.add(line);
+
+                //SKYBOX------------------------------------------------------------------------------------------
+                var skyGeometry = new THREE.SphereGeometry(500,64,64);  
+                var skyTexture = THREE.ImageUtils.loadTexture('images/sky_light3.png');
+                var skyMaterial = new THREE.MeshBasicMaterial( {  color: 0xffffff , map: skyTexture });
+                skyMaterial.side = THREE.DoubleSide;
+
+                skyDome = new THREE.Mesh(skyGeometry, skyMaterial); 
+                skyDome.position.y += -3.0;
+                skyDome.position.z += 3.0;
+                scene.add(skyDome);        
+          
+                //LÖV------------------------------------------------------------------------------------------
+                //Material
+                materials=[];
+                for (var mii=0;mii<6;mii++){
+                    var mat=new THREE.MeshBasicMaterial( {  color: 0xffffff , map: THREE.ImageUtils.loadTexture('images/leaf_lowpoly.png'), transparent: true });
+                    materials.push( mat );
+                }
+
+                //Sätt lövens positioner 
+                setLeafPositions();
+                
+                //Skapa löven etc.
+                setup(leaf_positions);
+
+                //Starta alla tweens
+                start();
+                    
+                //Rendera lövet i scenen
+                container = document.getElementById( 'leaf' );
+                document.body.appendChild( container );
+
+                renderer = new THREE.WebGLRenderer({antialias:true});
+                renderer.setSize( window.innerWidth, window.innerHeight);
+                container.appendChild( renderer.domElement );
+                renderer.setClearColor(0x000000);                
+            }
+
+            function setLeafPositions(){
+                //Sätt lövens positioner (fett hårdkodat)
+                var leaf_pos = new THREE.Vector3(-89,222,64);
+                var leaf1_pos = new THREE.Vector3(0,262,27);
+                var leaf2_pos = new THREE.Vector3(12,225,-24);
+
+                var leaf3_pos = new THREE.Vector3(-55,190,10);
+                var leaf4_pos = new THREE.Vector3(39,200,63);
+                var leaf5_pos = new THREE.Vector3(93,229,-55);
+
+                var leaf6_pos = new THREE.Vector3(-3,184,82);
+                var leaf7_pos = new THREE.Vector3(-17,184,-66);
+                var leaf8_pos = new THREE.Vector3(41,221,-6);
+
+                var leaf9_pos = new THREE.Vector3(-7,209,47); //10 träd
+
+                //Lägg till positionerna i en array
+                leaf_positions.push(leaf_pos);
+                leaf_positions.push(leaf1_pos);
+                leaf_positions.push(leaf2_pos);
+
+                leaf_positions.push(leaf3_pos);
+                leaf_positions.push(leaf4_pos);
+                leaf_positions.push(leaf5_pos);
+
+                leaf_positions.push(leaf6_pos);
+                leaf_positions.push(leaf7_pos);
+                leaf_positions.push(leaf8_pos);
+
+                leaf_positions.push(leaf9_pos);
+            }
+            
+            //Funktion för att starta animeringar med bend-funktionen
+            function start(){
+
+                //Leaf0
+                tween1.chain(tween2);
+                tween2.chain(tween1);
+                tween1.start();
+
+                tween3.chain(tween4);
+                tween4.chain(tween3);
+                tween3.start();
+
+                tween5.chain(tween6);
+                tween6.chain(tween5);
+                tween5.start();     
+
+                //Leaf3
+                tween7.chain(tween8);
+                tween8.chain(tween7);
+                tween7.start();     
+
+                tween9.chain(tween10);
+                tween10.chain(tween9);
+                tween9.start();
+
+                tween11.chain(tween12);
+                tween12.chain(tween11);
+                tween11.start();
+
+                tween13.chain(tween14);
+                tween14.chain(tween13);
+                tween13.start();     
+
+                //Leaf7
+                tween15.chain(tween16);
+                tween16.chain(tween15);
+                tween15.start();        
+
+                tween17.chain(tween18);
+                tween18.chain(tween17);
+                tween17.start();     
+
+                //Leaf9
+                tween19.chain(tween20);
+                tween20.chain(tween19);
+                tween19.start();                 
+            }
+
+            //Funktion för att rotera löven
+            function rotateleaf(noLeaves, leaves){
+            	for(i = 0; i < noLeaves; i++)
+            	{            		
+            		leaves[i].setRotationFromAxisAngle(axis, theta);
+            		setPosition(leaves[i], i);
+            	}
+            }
+
+            //Funktion för at göra fysikaliska beräkningar och rendera i webbfönstret
+            function animate() {                
+
+                var fps = 60;
+                setTimeout(function() {
+                requestAnimationFrame(animate);
+                            }, 1000 / fps);
+
+                //Bernoulli & fysik
+                force_wind = bernoulli(g, u, rho, p, A, y);
+                force_res = calculateForce(force_wind, k, c, w, theta);
+                torque_res = calculateTorque(force_res, r);
+                angle_acc = calculateAngAcc(torque_res, I);
+
+                y_prev = w;
+                y_deriv = angle_acc;
+
+                //Eulersteputräkning
+                w = eulerStep(y_prev, y_deriv, h);
+                theta = eulerStep(theta, w, h);
+
+                //Animera
+                rotateleaf(noLeaves, leaves);
+                TWEEN.update();
+                controls.update();
+                renderer.render( scene, camera );
+            }
+        </script>
+    </body>
+</html>
