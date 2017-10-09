@@ -71,9 +71,11 @@ flex-direction: column;
   justify-content: center;
 }
 
-#facebook {
+#resume {
   flex: 1;
-  background-color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #linkedin {
@@ -83,17 +85,12 @@ flex-direction: column;
   justify-content: center;
 }
 
-#linkedImage {
+.linkImage {
   border-radius: 50%;
   max-width: 90%;
   max-height: 90%;
 }
 
-#githubImage {
-  border-radius: 50%;
-  max-width: 90%;
-  max-height: 90%;
-}
 
 h1 {
   color: #5b5b5b;
