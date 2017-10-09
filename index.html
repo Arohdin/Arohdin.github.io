@@ -3,7 +3,7 @@
 <head>
   <title> Adam Rohdin </title>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=no; target-densityDpi=device-dpi" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densityDpi=device-dpi" />
   <script
   src="https://code.jquery.com/jquery-3.2.1.min.js"
   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -15,7 +15,12 @@
 <body>
   <div id="main">
     <div id="left">
-      <img id = "image" src = "https://arohdin.github.io/src/profile.jpg">
+      <div id = "imageContainer">
+          <img id = "image" src = "https://arohdin.github.io/src/profile.jpg">
+      </div>
+      <div id = "quote">
+        <h4 id ="quoteText">"If I had a quote, it would probably go here"</h4>
+      </div>
     </div>
     <div id ="right">
       <div id = "header">
@@ -25,13 +30,13 @@
       </div>
       <div id = "content">
         <p id = "info">
-          My name is Adam Rohdin and I am currently pursuing a Master of Science in Media Technology. 
+          My name is Adam Rohdin and I am currently pursuing a Master of Science degree in Media Technology. 
           When I am not coding or studying I like to do everything creative.
           One of the things I've learned since I started at Linköping University in 2014 is that it is not only fun to learn, but also to teach.
-          For that reason I've been involved/worked as both coding coach and lab assistant.
+          For that reason I've been worked as both coding coach and lab assistant.
           Areas I find interesting are game engines, physics, machine learning and image processing.
         </p>
-        <div style = "padding-left: 15vw; padding-right: 15vw;">
+        <div id = "ul-div">
             <ul>
               <hr>
               <br>
