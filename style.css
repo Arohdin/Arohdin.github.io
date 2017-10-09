@@ -30,6 +30,9 @@ ul{
 li{
   padding-top:1%;
   padding-bottom: 1%;
+  font-size: 36pt;
+  font-family: 'Roboto', sans-serif;
+  color: #ecf0f1;
 }
 
 #f{
