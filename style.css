@@ -4,55 +4,128 @@
   margin: 0px;
 }
 body{
-  background-color: #34495e;
   padding: 0px;
   margin: 0px;
   overflow: hidden;
 }
 
-a{
-  font-size: 36pt;
-  font-family: 'Roboto', sans-serif;
-  color: #ecf0f1;
+#main {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
 }
 
-a:visited{
-  direction: none;
+
+#left {
+  background-color: #2c3e50;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-a:link {
-    text-decoration: none;
+#right {
+background-color: #ecf0f1;
+flex: 1.6180339887;
+display: flex;
+flex-direction: column;
 }
 
-ul{
+#image {
+  max-width: 250;
+  max-height: 250px;
+  border-radius: 50%;
+  padding-left: 2vw;
+  padding-right: 2vw;
+}
+
+#content {
+  flex: 10;
+  display: flex;
+  justify-content: center;
+  padding-top: 15vh;
+  padding-left: 15vw;
+  padding-right: 15vw;
+
+}
+
+#header {
+  display: flex;
+  flex: 6;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+#socials{
+  display: flex;
+  align-self: center;
+  width: 192px;
+  height: 64px;
+}
+
+#github {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#facebook {
+  flex: 1;
+  background-color: red;
+}
+
+#linkedin {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#linkedImage {
+  border-radius: 50%;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+#githubImage {
+  border-radius: 50%;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+h1 {
+  color: #5b5b5b;
+  font-family: "Roboto", sans-serif;
+	font-size: 48pt;
+}
+
+h2 {
+  color: #818181;
+  font-family: "Roboto", sans-serif;
+	font-size: 12pt;
+}
+
+h3 {
+  color: #818181;
+  font-family: "Roboto", sans-serif;
+	font-size: 10pt;
+}
+
+ul {
   list-style-type: none;
-}
-li{
-  padding-top:1%;
-  padding-bottom: 1%;
-  font-size: 36pt;
-  font-family: 'Roboto', sans-serif;
-  color: #ecf0f1;
+  color: #3D3D3D;
+  font-family: "Roboto", sans-serif;
+  font-size: 16pt;
+  display: flex;
+  flex-direction: column;
 }
 
-#f{
-  margin-top: 10%;
+li {
+  display: flex;
 }
 
-#l2{
-  margin-left: 5%;
-}
-
-#l3{
-  margin-left: 10%;
-}
-
-#l4{
-  margin-left: 15%;
-}
-#l5{
-  margin-left: 20%;
-}
-#l6{
-  margin-left: 25%;
+hr {
+  border: 0.5px solid #D6D6D6;
 }

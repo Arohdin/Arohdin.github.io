@@ -9,6 +9,7 @@
 
 var scrollable = 1;
 var status;
+var topBarHeight = 300;
 
 //OnLoad
 $(document).ready(function() {
@@ -50,10 +51,10 @@ $(document).scroll(function() {
 
 	if (scrollPos >= 0 && !(scrollPos >= firstCH - 64))
 	{
-		elemStuff.css("margin-top", 100 - (90/(firstCH-64) * scrollPos));
-		elemStuff.css("margin-left", 100 - (90/(firstCH-64) * scrollPos));
-		elemStuff.css("width", 100 - (56/(firstCH-64) * scrollPos));
-		elemStuff.css("height", 100 - (56/(firstCH-64) * scrollPos));
+		elemStuff.css("margin-top", 250 - (240/(firstCH-64) * scrollPos));
+		elemStuff.css("margin-left", 250 - (240/(firstCH-64) * scrollPos));
+		elemStuff.css("width", topBarHeight - (256/(firstCH-64) * scrollPos));
+		elemStuff.css("height", topBarHeight - (256/(firstCH-64) * scrollPos));
 	}
 	else
 	{
@@ -86,8 +87,12 @@ function sweetAnimation(){
 			scrollable = 0;
 			status = 1;
 			setTimeout(function(){
-				$("#texty").fadeIn("slow");
+				$("#name").fadeIn("slow");
+				$("#email").fadeIn("slow");
+				$("#phone").fadeIn("slow");
 			}, 600);
+			
+			$("#hello").fadeOut("slow");
 			$("html, body").animate({scrollTop: t/2 + "px"}, 1200);
 			setTimeout(function(){
 				scrollable = 1;
@@ -96,7 +101,12 @@ function sweetAnimation(){
 		else if(scrollable == 1 && status == 1){
 			scrollable = 0;
 			status = 0;
-			$("#texty").fadeOut("slow");
+			$("#name").fadeOut("slow");
+			$("#email").fadeOut("slow");
+			$("#phone").fadeOut("slow");
+			setTimeout(function(){
+				$("#hello").fadeIn("slow");
+			}, 600);
 			$("html, body").animate({scrollTop: 0 + "px"}, 1200);
 			setTimeout(function(){
 				scrollable = 1;
