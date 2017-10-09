@@ -82,6 +82,7 @@ body{
 
   ul {
     list-style-type: none;
+    padding: 0;
     color: #3D3D3D;
     font-family: "Roboto", sans-serif;
     font-weight: 300;
@@ -195,7 +196,8 @@ body{
   }
 
   ul {
-    padding-right: 10vw;
+    padding-left: 7vw;
+    padding-right: 7vw;
     flex: 1;
     align-self: center;
     list-style-type: none;
