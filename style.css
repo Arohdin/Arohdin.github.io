@@ -17,7 +17,7 @@ body{
 
 
 #left {
-  background-color: #2c3e50;
+  background: linear-gradient(#003399 , #0099cc);
   flex: 1;
   display: flex;
   align-items: center;
@@ -26,7 +26,7 @@ body{
 
 #right {
 background-color: #ecf0f1;
-flex: 1.6180339887;
+flex: 1;
 display: flex;
 flex-direction: column;
 }
@@ -87,8 +87,8 @@ flex-direction: column;
 
 .linkImage {
   border-radius: 50%;
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 75%;
+  max-height: 75%;
 }
 
 
