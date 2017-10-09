@@ -41,17 +41,14 @@ flex-direction: column;
 
 #content {
   flex: 10;
+  flex-direction: column;
   display: flex;
-  justify-content: center;
-  padding-top: 15vh;
-  padding-left: 15vw;
-  padding-right: 15vw;
 
 }
 
 #header {
   display: flex;
-  flex: 6;
+  flex: 4;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
@@ -83,6 +80,13 @@ flex-direction: column;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+#info {
+  padding-bottom: 7vh;
+  padding-top: 7vh;
+  padding-left: 10vw;
+  padding-right: 10vw;
 }
 
 .linkImage {
@@ -125,4 +129,10 @@ li {
 
 hr {
   border: 0.5px solid #D6D6D6;
+}
+
+p {
+  color: #4D4D4D;
+  font-family: "Roboto", sans-serif;
+	font-size: 14pt;
 }
