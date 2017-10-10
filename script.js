@@ -3,6 +3,9 @@ var rInt = Math.floor(Math.random() * 4) + 1;
 
 
 $(document).ready(() => {
+    document.getElementById('main').style.height = $(window).height();
+    document.getElementById('main').style.width = $(window).width();
+
     let c1 = (colors['p'+rInt])[0];
     let c2 = (colors['p'+rInt])[1];
 
