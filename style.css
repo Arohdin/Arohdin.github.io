@@ -20,7 +20,6 @@ body{
   }
 
   #left {
-    background: linear-gradient(#003399 , #0099cc);
     justify-content: center;
     flex: 1;
     display: flex;

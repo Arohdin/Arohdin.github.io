@@ -1,25 +1,34 @@
-var colors = {p1: ['#003399', '#0099cc'], p2: ['#21A857', '#AEFFB2'], p3: ['#692486', '#FFC981'], p4: ['#e74c3c', '#FF6D8D'], p5: ['#003399', '#FF6D8D']};
+var colors = {p1: ['#003399', '#0099cc'], p2: ['#692486', '#FFC981'], p3: ['#e74c3c', '#ff6d6d'], p4: ['#003399', '#FF6D8D']};
+var rInt = Math.floor(Math.random() * 4) + 1;
 
 
 $(document).ready(() => {
-    $('#header').hide();
-    $('#image').hide();
-    $('#info').hide();
-    $('#contact').hide();
-    $('#socials').hide();
-    $('#quoteText').hide();
+    let c1 = (colors['p'+rInt])[0];
+    let c2 = (colors['p'+rInt])[1];
 
-    $('#image').fadeIn(1000);
+    document.getElementById('left').style.background = "linear-gradient(" + c1 + ", " + c2 + ")";
+
+    $('#header').css('visibility','hidden');
+    $('#image').css('visibility','hidden');
+    $('#info').css('visibility','hidden');
+    $('#contact').css('visibility','hidden');
+    $('#socials').css('visibility','hidden');
+    $('#quoteText').css('visibility','hidden');
+
+    $('#image').css('visibility','visible').hide().fadeIn(1000);
     setTimeout(() => {
-        $('#header').fadeIn(1000);
+        $('#header').css('visibility','visible').hide().fadeIn(1000);
         setTimeout(() => {
-            $('#info').fadeIn(1000);
+            $('#info').css('visibility','visible').hide().fadeIn(1000);
             setTimeout(() => {
-                $('#contact').hide().fadeIn(1000);
-                $('#socials').hide().fadeIn(1000);
-                setTimeout(() => {
-                    $('#quoteText').hide().fadeIn(1500);
-                },750);
+                $('#contact').css('visibility','visible').hide().fadeIn(1000);
+                $('#socials').css('visibility','visible').hide().fadeIn(1000);
+                if($(window).width() > 768)
+                {
+                    setTimeout(() => {
+                        $('#quoteText').css('visibility','visible').hide().fadeIn(1500);
+                    },750);
+                }
             }, 250);
         }, 250);
     }, 250);
