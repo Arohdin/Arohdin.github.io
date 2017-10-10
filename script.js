@@ -1,3 +1,6 @@
+var colors = {p1: ['#003399', '#0099cc'], p2: ['#21A857', '#AEFFB2'], p3: ['#692486', '#FFC981'], p4: ['#e74c3c', '#FF6D8D'], p5: ['#003399', '#FF6D8D']};
+
+
 $(document).ready(() => {
     $('#header').hide();
     $('#image').hide();
