@@ -1,5 +1,5 @@
-var colors = {p1: ['#003399', '#0099cc'], p2: ['#692486', '#FFC981'], p3: ['#e74c3c', '#ff6d6d'], p4: ['#003399', '#FF6D8D']};
-var rInt = Math.floor(Math.random() * 4) + 1;
+var colors = {p1: ['#003399', '#0099cc'], p2: ['#692486', '#FFC981'], p3: ['#003399', '#FF6D8D']};
+var rInt = Math.floor(Math.random() * 3) + 1;
 
 
 $(document).ready(() => {
@@ -36,4 +36,10 @@ $(document).ready(() => {
         }, 250);
     }, 250);
 
+});
+
+
+$(window).resize(() => {
+    document.getElementById('main').style.height = $(window).height() + "px";
+    document.getElementById('main').style.width = $(window).width() + "px"; 
 });
