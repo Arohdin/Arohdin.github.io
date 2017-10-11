@@ -22,8 +22,8 @@ function walls()
 	battlefieldHeight = c.height;
 
 	w.sources = {
-		background: 'https://github.com/Arohdin/Arohdin.github.io/blob/master/vocalinator/Images/moon.jpg?raw=true',
-		battlefield: 'https://github.com/Arohdin/Arohdin.github.io/blob/master/vocalinator/Images/highResBattlefield.png?raw=tru'
+		background: 'Images/moon.jpg',
+		battlefield: 'Images/highResBattlefield.png'
     };
 
 

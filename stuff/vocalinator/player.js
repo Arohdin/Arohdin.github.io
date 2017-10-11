@@ -44,7 +44,7 @@ function player(){
 	{
 
 	p.sources = {
-		playerSprite: 'https://github.com/Arohdin/Arohdin.github.io/blob/master/vocalinator/Images/player.png?raw=true'
+		playerSprite: 'Images/player.png'
     };
 
 	for(var src in p.sources) {
