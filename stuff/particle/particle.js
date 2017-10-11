@@ -179,12 +179,11 @@ function draw(time) {
   {
     ctx.clearRect (0 , 0 , canvas.width, canvas.height);
   }
-    ctx.font = "25px Roboto";
-    ctx.fillText("fps: " + FPS, (winWidth * superSampler) - 100, 50);
-    ctx.fillText("press 'a'", 25,50);
-    ctx.fillText("press 's'", 25,75);
-    ctx.fillText("press 'd'", 25,100);
-    ctx.fillText("press 'mb1'", 25,125);
+    ctx.font = "24pt Arial";
+    ctx.fillText("fps: " + FPS, (winWidth * superSampler) - 110, 50);
+    ctx.fillText("press 'a' to interact", 25,50);
+    ctx.fillText("press 's' for slow-motion", 25,90);
+    ctx.fillText("press 'd' to disable frame clearing", 25,130);
 
 
 if(!_PAUSE)

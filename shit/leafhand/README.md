@@ -1,2 +1,0 @@
-# LiveLeaf
-Leaf simulation
