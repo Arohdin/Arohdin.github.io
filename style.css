@@ -131,6 +131,17 @@ body{
     padding-left: 10vw;
     padding-right: 10vw;
   }
+
+  #warning {
+    display: flex;
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    width: 50vw;
+    height: 5vh;
+    top: 95vh;
+    left: 50vw;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -241,6 +252,16 @@ body{
     padding-left: 7vw;
     padding-right: 7vw;
   }
+  
+  #warning {
+    display: flex;
+    position: fixed;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 5vh;
+    top: 95vh;
+  }
 }
 
 
@@ -282,4 +303,8 @@ li {
   display: flex;
 }
 
+#warningText {
+  font-size: 11pt;
+  opacity: 0.5;
+}
 
